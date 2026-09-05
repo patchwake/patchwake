@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build an Orchestrator"
+  short_description: "Compose a custom task-to-agent workflow"
+  default_prompt: "Use $build-orchestrator to create a custom board and code-host orchestration workflow."
