@@ -9,11 +9,9 @@ board + activity sources -> observe -> decide -> act -> notification channels
                                       `-> one resumable agent session per task
 ```
 
-It extracts the reusable mechanics from a production YouTrack + GitLab/GitHub +
-Slack worker without carrying those product choices into the core. Boards, code
-hosts, agent runtimes, and notification destinations are ports. The repository
-includes Claude Code and Codex CLI runtimes plus a concrete Trello + GitHub
-example.
+Boards, code hosts, agent runtimes, and notification destinations are
+interchangeable ports. The repository includes Claude Code and Codex CLI
+runtimes plus a concrete Trello + GitHub example.
 
 ## What the core gives you
 
@@ -96,8 +94,7 @@ remain running between ticks.
 
 ## Build your own workflow
 
-Start with [docs/customizing.md](docs/customizing.md); the extraction boundary is
-documented in [docs/extraction.md](docs/extraction.md). In Codex, invoke the
+Start with [docs/customizing.md](docs/customizing.md). In Codex, invoke the
 repository skill:
 
 ```text
