@@ -26,32 +26,51 @@ example.
 - file-backed state that makes each cron invocation disposable;
 - a dry-run path and pure policy functions that are easy to test.
 
-The core uses only the Python standard library and targets Python 3.10+.
+Orchestra is written in strict TypeScript and targets Node.js 22+ on Linux and
+macOS. Network adapters use asynchronous interfaces and Node's built-in `fetch`.
+The only runtime dependency is `fs-ext`, which supplies the operating-system
+file locks used for process liveness and overlap protection.
 
 ## Repository tour
 
 ```text
-orchestra/                    reusable models, ports, state, policy, engine
+orchestra/                    TypeScript models, ports, state, policy, engine
 templates/task/               default per-task agent workspace
 examples/trello_github/       a real composition using Trello and GitHub
 skills/build-orchestrator/    instructions for agents extending this repo
-tests/                        executable invariants for the foundation
+tests/                        Node test runner tests and fake agent fixtures
 docs/                         architecture and extension guide
 ```
 
 ## Try it
 
-Run the tests without installing the package:
+Install and build from the repository root:
 
 ```bash
-python -m pytest
+npm ci
+npm run build
+npm test
 ```
 
-Preview the Trello + GitHub composition after copying `.env.example` values
-into your environment:
+`fs-ext` is a native addon. Installation requires the usual `node-gyp` build
+prerequisites: Python and a C/C++ toolchain (Xcode Command Line Tools on macOS,
+or a compiler and make on Linux). Python is used only when building this
+dependency; Orchestra and its workers run in Node.js. Use an up-to-date npm
+with recent Python versions. If an older npm reports missing `distutils`, use
+`npm ci --python=/path/to/python3.11` or update npm.
+
+The repository allows the pinned `fs-ext` build script for npm versions that
+require an install-script allowlist. When installing Orchestra into a separate
+application with that policy, run `npm approve-scripts fs-ext` and
+`npm rebuild fs-ext` if npm reports the native build as pending.
+
+Check all source and tests with `npm run typecheck` and `npm run format:check`.
+
+Preview the Trello + GitHub composition after setting `.env.example` values
+in your process environment:
 
 ```bash
-python -m examples.trello_github.orchestrator --dry-run
+npm start -- --dry-run
 ```
 
 Select the agent implementation independently from the board and code host:
@@ -63,11 +82,17 @@ export ORCHESTRA_AGENT_ENGINE=codex  # or claude
 Run one real tick:
 
 ```bash
-python -m examples.trello_github.orchestrator
+npm start
 ```
 
-Schedule that command with cron, a systemd timer, GitHub Actions, or any other
-single-run scheduler. `var/tick.lock` prevents overlapping invocations.
+Read local task status with `npm start -- --status`.
+
+Schedule `node /absolute/path/to/orchestra/dist/examples/trello_github/orchestrator.js`
+with cron or a systemd timer on a persistent host. Use an absolute Node executable
+path and configure credentials in the scheduler environment.
+`var/cache/tick.lock` prevents overlapping invocations. Persist `var/` on a local
+filesystem with working `flock` semantics; detached turns need the same host to
+remain running between ticks.
 
 ## Build your own workflow
 
@@ -81,6 +106,14 @@ GitHub pull requests, runs Claude Code, and reports health to Teams.
 ```
 
 The intended customization surface is composition, not inheritance: implement
-the small protocols in `orchestra/ports.py`, choose or implement an
+the small interfaces in `orchestra/ports.ts`, choose or implement an
 `AgentRuntime`, assemble everything with `Engine`, and keep provider-specific
 policy in the adapter or task template that owns it.
+
+## Migrating an existing Python installation
+
+The TypeScript API uses camelCase names and `await engine.tick()`; the durable
+JSON files retain their existing snake_case keys, Unix-second timestamps,
+runtime session namespaces, and OS lock files. Existing task state does not
+need conversion. See [docs/migration.md](docs/migration.md) for the scheduler
+cutover and extension API changes.

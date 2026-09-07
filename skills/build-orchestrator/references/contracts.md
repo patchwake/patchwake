@@ -7,7 +7,7 @@ Read this when adding or changing a `Board`, `ActivitySource`, `AgentRuntime`, o
 
 - `fetch()` returns the complete current plate, not a delta.
 - Return an empty sequence only after a successful remote observation.
-- Raise on missing credentials, invalid configuration, and remote failures.
+- Throw on missing credentials, invalid configuration, and remote failures.
 - `WorkItem.key` is durable and safe as a directory segment.
 - Put provider ids and routing hints in `metadata`; keep the shared model small.
 
@@ -18,16 +18,16 @@ Read this when adding or changing a `Board`, `ActivitySource`, `AgentRuntime`, o
 - A cursor is numeric, monotonic within its stream, and based on the event—not
   the local polling time.
 - Do not place comment bodies, review text, or instructions in `Activity`.
-- `directed=False` may suppress a wake. When direction cannot be established,
-  use `None` so uncertainty fails open.
-- Authentication or transport failure raises. Do not silently return an empty
+- `directed: false` may suppress a wake. When direction cannot be established,
+  use `null` so uncertainty fails open.
+- Authentication or transport failure throws. Do not silently return an empty
   mapping, which would be indistinguishable from “nothing happened.”
 
 ## Runtime
 
 - One task has one stable session id per runtime across its turns. Session ids
   are runtime-owned opaque values; never reuse one engine's id with another.
-- `start()` writes intent before spawning, returns `ok=True` only after process
+- `start()` writes intent before spawning, returns `ok: true` only after process
   creation, and never evaluates task data through a shell.
 - The worker holds a lock for its entire life and writes completion atomically.
 - Logs are append-only; their modification time is the stall heartbeat.

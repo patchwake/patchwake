@@ -12,7 +12,7 @@ engine.
 ## Start from the live contracts
 
 1. Read `docs/architecture.md` and `docs/customizing.md` in the repository.
-2. Read `orchestra/ports.py`, `orchestra/models.py`, and the composition closest
+2. Read `orchestra/ports.ts`, `orchestra/models.ts`, and the composition closest
    to the requested providers under `examples/`.
 3. Read [references/contracts.md](references/contracts.md) when implementing or
    changing an adapter or runtime.

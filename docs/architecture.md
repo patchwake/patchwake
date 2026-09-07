@@ -51,6 +51,19 @@ The state is derived from lock ownership plus `turn.json` and `status.json`.
 A PID alone is never trusted because operating systems reuse PIDs. The worker
 holds `.orchestra/turn.lock` for its full lifetime.
 
+The Node.js supervisor acquires this OS lock before writing turn intent and
+passes the locked file descriptor to the detached worker. The worker acknowledges
+actual agent process creation over IPC before `start()` succeeds. The scheduler
+then closes its own descriptor and exits; the worker retains lock ownership until
+the agent exits. Graceful termination leaves the wrapper alive while it waits
+for its child, so an agent ignoring SIGTERM remains visible for a later SIGKILL.
+
+The TypeScript API uses camelCase and asynchronous ports. Each phase is awaited
+in order, including notification channels. The tick lock covers the complete
+asynchronous operation; workers execute compiled JavaScript using the same Node
+executable as the scheduler. `fs-ext` provides the existing `flock` semantics on
+Linux and macOS. Durable JSON uses snake_case and Unix seconds as before.
+
 ## Durable per-task contract
 
 Each claim lives in `var/work/<task-key>/` and contains a `.orchestra/`

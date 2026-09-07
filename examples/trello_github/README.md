@@ -14,8 +14,8 @@ Conventions:
   comments must mention `GITHUB_BOT_LOGIN` when directed wakeups are enabled.
 
 Configure the values in the root `.env.example` through the process environment,
-then run `python -m examples.trello_github.orchestrator --dry-run` from the
-repository root.
+then run `npm start -- --dry-run` from the
+repository root after `npm ci` and `npm run build`.
 
 Choose the agent CLI with `ORCHESTRA_AGENT_ENGINE=claude` or
 `ORCHESTRA_AGENT_ENGINE=codex`. Claude uses its configured permission mode.

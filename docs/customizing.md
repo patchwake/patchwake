@@ -1,7 +1,9 @@
 # Build a custom orchestrator
 
 Most custom workflows need three adapters and one composition module. Read
-`orchestra/ports.py` alongside the working `examples/trello_github/` example.
+`orchestra/ports.ts` alongside the working `examples/trello_github/` example.
+Ports accept synchronous results or promises; use `async` methods for network
+transports and call `await engine.tick()` in the composition.
 
 ## 1. Define the plate
 
@@ -11,7 +13,7 @@ underscores, and hyphens. The key becomes a directory name, branch convention,
 and durable identity; never derive it from a mutable title.
 
 A normal empty response must return `[]`. Authentication, configuration, and
-transport failures must raise. That difference prevents an outage from looking
+transport failures must throw. That difference prevents an outage from looking
 like mass unassignment.
 
 ## 2. Normalize wake signals
@@ -20,7 +22,7 @@ Implement one `ActivitySource` per remote system. Every `Activity.stream` must
 identify exactly one monotonically increasing feed, and its numeric `cursor`
 must never move backward. Include the author and a URL, but not raw comment
 content. If the source can decide whether a comment addresses the bot, set
-`directed`; otherwise leave it as `None`, which fails open to a wake.
+`directed`; otherwise leave it as `null`, which fails open to a wake.
 
 Use a stable code-host convention to associate reviews with tasks. The example
 uses branch `agent-<task-key>` and a Trello label `repo:<owner>/<repo>`.
@@ -49,19 +51,19 @@ before changing CLI argument construction.
 
 Both run detached, append JSONL to the task log, and write completion status
 atomically. Pass credentials into agent turns only through the runtime config's
-`passthrough_env`; observer credentials are not implicitly exposed. Codex can
+`passthroughEnv`; observer credentials are not implicitly exposed. Codex can
 also use authentication already stored under its home directory.
 
 Select either stock runtime in composition, as the Trello/GitHub example does
 with `ORCHESTRA_AGENT_ENGINE`. Implement `AgentRuntime` when another CLI or
 hosted agent needs different session and liveness mechanics. The runtime owns
 its session namespace and must return success only when the turn was actually
-created; `is_alive()` must not rely only on a stale PID.
+created; `isAlive()` must not rely only on a stale PID.
 
 ## 4. Compose, do not subclass
 
 Create a small executable module that constructs the store, board, sources,
-runtime, channels, and `EngineConfig`, then calls `engine.tick()`. Provider
+runtime, channels, and an `EngineConfig` object, then calls `await engine.tick()`. Provider
 configuration belongs in that module or its adapters. Board-specific workflow
 rules belong in `templates/task/`, where every turn can see them.
 
@@ -88,3 +90,33 @@ Use fakes to prove at least these behaviors before enabling real writes:
 
 Start with `--dry-run`, inspect the task directories and report, then run a
 single real task before scheduling recurring ticks.
+
+## TypeScript composition shape
+
+```ts
+import { Engine, FileStateStore, ClaudeCodeRuntime, ConsoleChannel,
+  health, OK, workItem } from "agent-orchestra";
+import type { Board } from "agent-orchestra";
+
+const board: Board = {
+  name: "example-board",
+  async fetch() {
+    // Replace this fixture with an authoritative read of the assignment set.
+    return [workItem({ key: "TASK-1", title: "Example", url: "https://board.test/1" })];
+  },
+  health() { return health(OK, "fixture loaded"); },
+};
+const store = new FileStateStore("./var", "./templates/task");
+const engine = new Engine({
+  board,
+  activitySources: [],
+  runtime: new ClaudeCodeRuntime(store, { passthroughEnv: ["GITHUB_TOKEN"] }),
+  channels: [new ConsoleChannel()],
+  store,
+  config: { maxConcurrentTurns: 3 },
+});
+await engine.tick({ dryRun: true });
+```
+
+Compile before scheduling. See [migration.md](migration.md) for the Python API
+mapping and compatibility of existing task state.
