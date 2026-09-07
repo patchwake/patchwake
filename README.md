@@ -96,12 +96,51 @@ remain running between ticks.
 ## Build your own workflow
 
 Start with [docs/customizing.md](docs/customizing.md). In Codex, invoke the
-repository skill:
+repository skill. The following prompt can be copied and completed with the
+providers and conventions for a new workflow:
 
 ```text
-$build-orchestrator Build an orchestrator that reads Linear issues, observes
-GitHub pull requests, runs Claude Code, and reports health to Teams.
+$build-orchestrator Build a custom workflow in this repository.
+
+Workflow:
+- Board and assignment query: <provider and how assigned work is selected>
+- Activity sources: <systems and events that should wake an agent>
+- Task-to-repository mapping: <label, field, naming convention, or lookup>
+- Agent runtime: <Codex CLI, Claude Code, or another runtime>
+- Health destination: <console, Slack, Teams, email, or another channel>
+- Maximum concurrent turns: <number>
+- Schedule: <cron, systemd timer, or another trigger>
+- Agent credential allowlist: <environment variable names, or none>
+
+Keep provider logic in adapters and reuse Orchestra's engine and file store.
+Add the composition under examples/<workflow-name>, document configuration and
+dry-run commands, and add tests for assignment, wakeups, outages, retries, and
+session resumption. Before coding, summarize the design and ask only for
+missing choices that would materially change external behavior.
 ```
+
+For example, a user could start with:
+
+```text
+User: $build-orchestrator Create a Trello + GitHub workflow. Cards assigned to
+the automation member in the "Ready" list are work. A `repo:owner/name` label
+selects the repository. Wake the agent for new pull-request reviews, CI results,
+and comments that mention `@my-agent`. Use Codex CLI, allow at most two turns,
+report health to the console, and support a five-minute cron schedule. Only pass
+GITHUB_TOKEN to agent turns.
+
+Agent: I can implement this with a Trello Board adapter, a GitHub ActivitySource,
+CodexCliRuntime, ConsoleChannel, and the stock FileStateStore. Two choices affect
+behavior: should moving a card out of "Ready" stop an idle task, and should a
+failed CI check wake the agent immediately?
+
+User: Yes to both. Start with fixtures and a dry run; do not make remote writes
+during validation.
+```
+
+The agent should then implement the adapters and composition, run the tests,
+exercise a dry tick, and report the exact configuration, credential boundary,
+and scheduler command it created.
 
 The intended customization surface is composition, not inheritance: implement
 the small interfaces in `orchestra/ports.ts`, choose or implement an
