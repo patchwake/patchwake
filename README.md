@@ -11,7 +11,8 @@ board + activity sources -> observe -> decide -> act -> notification channels
 
 Boards, code hosts, agent runtimes, and notification destinations are
 interchangeable ports. The repository includes Claude Code and Codex CLI
-runtimes plus a concrete Trello + GitHub example.
+runtimes plus a concrete Trello + GitHub example, but the idea is that all the
+pieces can be replaced and extended.
 
 ## What the core gives you
 
