@@ -61,8 +61,8 @@ for its child, so an agent ignoring SIGTERM remains visible for a later SIGKILL.
 The TypeScript API uses camelCase and asynchronous ports. Each phase is awaited
 in order, including notification channels. The tick lock covers the complete
 asynchronous operation; workers execute compiled JavaScript using the same Node
-executable as the scheduler. `fs-ext` provides the existing `flock` semantics on
-Linux and macOS. Durable JSON uses snake_case and Unix seconds as before.
+executable as the scheduler. `fs-ext` provides OS-level `flock` semantics on
+Linux and macOS. Durable JSON uses snake_case keys and Unix-second timestamps.
 
 ## Durable per-task contract
 

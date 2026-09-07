@@ -118,5 +118,4 @@ const engine = new Engine({
 await engine.tick({ dryRun: true });
 ```
 
-Compile before scheduling. See [migration.md](migration.md) for the Python API
-mapping and compatibility of existing task state.
+Compile before scheduling.

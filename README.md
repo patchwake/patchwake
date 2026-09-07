@@ -106,11 +106,3 @@ The intended customization surface is composition, not inheritance: implement
 the small interfaces in `orchestra/ports.ts`, choose or implement an
 `AgentRuntime`, assemble everything with `Engine`, and keep provider-specific
 policy in the adapter or task template that owns it.
-
-## Migrating an existing Python installation
-
-The TypeScript API uses camelCase names and `await engine.tick()`; the durable
-JSON files retain their existing snake_case keys, Unix-second timestamps,
-runtime session namespaces, and OS lock files. Existing task state does not
-need conversion. See [docs/migration.md](docs/migration.md) for the scheduler
-cutover and extension API changes.

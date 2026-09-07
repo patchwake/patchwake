@@ -106,7 +106,7 @@ test("OS locks release on process death and stale lock files do not imply livene
   await exited;
   await waitFor(() => !lockIsHeld(path), "lock release after crash");
 });
-test("reads Python-era JSON records without migration and retains seconds", (t) => {
+test("reads durable JSON records with snake_case keys and Unix-second timestamps", (t) => {
   const store = new FileStateStore(join(temporary(t), "var")),
     directory = store.claim(work());
   writeJsonAtomic(store.statePath(directory, "turn.json"), {

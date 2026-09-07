@@ -53,7 +53,7 @@ export function observation(
   return { activities, waits };
 }
 
-// Persisted records retain the Python implementation's snake_case keys and seconds.
+// Persisted records use snake_case keys and Unix-second timestamps.
 export interface TurnRecord {
   readonly version?: number;
   readonly sequence?: number;
