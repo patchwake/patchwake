@@ -8,8 +8,8 @@ import {
 } from "../examples/trello_github/adapters.js";
 import type { HttpClient } from "../examples/trello_github/adapters.js";
 import { buildEngine } from "../examples/trello_github/orchestrator.js";
-import { ClaudeCodeRuntime, CodexCliRuntime } from "../orchestra/runtime.js";
-import { workItem } from "../orchestra/models.js";
+import { ClaudeCodeRuntime, CodexCliRuntime } from "../patchwake/runtime.js";
+import { workItem } from "../patchwake/models.js";
 import { temporary, work } from "./helpers.js";
 class FixtureHttp implements HttpClient {
   readonly calls: string[] = [];
@@ -272,21 +272,21 @@ test("composition selects either runtime, preserves credential allowlists, and r
     buildEngine({
       root,
       dryRun: true,
-      env: { ORCHESTRA_AGENT_ENGINE: "claude" },
+      env: { PATCHWAKE_AGENT_ENGINE: "claude" },
     }).runtime instanceof ClaudeCodeRuntime,
   );
   const codex = buildEngine({
     root,
     dryRun: true,
     env: {
-      ORCHESTRA_AGENT_ENGINE: "codex",
-      ORCHESTRA_AGENT_ENV: "GITHUB_TOKEN, TRELLO_KEY",
+      PATCHWAKE_AGENT_ENGINE: "codex",
+      PATCHWAKE_AGENT_ENV: "GITHUB_TOKEN, TRELLO_KEY",
     },
   }).runtime;
   assert.ok(codex instanceof CodexCliRuntime);
   assert.deepEqual(codex.config.passthroughEnv, ["GITHUB_TOKEN", "TRELLO_KEY"]);
   assert.throws(
-    () => buildEngine({ root, env: { ORCHESTRA_AGENT_ENGINE: "mystery" } }),
+    () => buildEngine({ root, env: { PATCHWAKE_AGENT_ENGINE: "mystery" } }),
     /must be 'claude' or 'codex'/,
   );
 });

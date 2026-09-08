@@ -21,7 +21,7 @@ export function buildCommand(env: NodeJS.ProcessEnv = process.env): {
   let standing = "";
   try {
     standing = readFileSync(
-      env.ORCHESTRA_SYSTEM_PROMPT_FILE ?? "SYSTEM.md",
+      env.PATCHWAKE_SYSTEM_PROMPT_FILE ?? "SYSTEM.md",
       "utf8",
     );
   } catch (error) {
@@ -29,7 +29,7 @@ export function buildCommand(env: NodeJS.ProcessEnv = process.env): {
   }
   let extra: unknown;
   try {
-    extra = JSON.parse(env.ORCHESTRA_EXTRA_ARGS ?? "[]");
+    extra = JSON.parse(env.PATCHWAKE_EXTRA_ARGS ?? "[]");
   } catch {
     extra = [];
   }
@@ -38,58 +38,58 @@ export function buildCommand(env: NodeJS.ProcessEnv = process.env): {
     extra.every((value: unknown) => typeof value === "string")
       ? (extra as string[])
       : [];
-  const prompt = env.ORCHESTRA_PROMPT ?? "";
-  const sessionId = env.ORCHESTRA_SESSION_ID ?? "";
-  if (env.ORCHESTRA_RUNTIME === "claude-code") {
+  const prompt = env.PATCHWAKE_PROMPT ?? "";
+  const sessionId = env.PATCHWAKE_SESSION_ID ?? "";
+  if (env.PATCHWAKE_RUNTIME === "claude-code") {
     const args = [
       "-p",
       prompt,
-      env.ORCHESTRA_RESUME === "1" ? "--resume" : "--session-id",
+      env.PATCHWAKE_RESUME === "1" ? "--resume" : "--session-id",
       sessionId,
       "--output-format",
       "stream-json",
       "--verbose",
       "--permission-mode",
-      env.ORCHESTRA_PERMISSION_MODE ?? "default",
+      env.PATCHWAKE_PERMISSION_MODE ?? "default",
     ];
-    if (env.ORCHESTRA_MODEL) args.push("--model", env.ORCHESTRA_MODEL);
+    if (env.PATCHWAKE_MODEL) args.push("--model", env.PATCHWAKE_MODEL);
     args.push(...extraArgs);
     if (standing) args.push("--append-system-prompt", standing);
-    return { executable: env.ORCHESTRA_AGENT_BIN ?? "claude", args };
+    return { executable: env.PATCHWAKE_AGENT_BIN ?? "claude", args };
   }
   const args = ["exec"];
-  if (env.ORCHESTRA_CODEX_DANGEROUS_BYPASS === "1")
+  if (env.PATCHWAKE_CODEX_DANGEROUS_BYPASS === "1")
     args.push("--dangerously-bypass-approvals-and-sandbox");
   else {
-    args.push("--sandbox", env.ORCHESTRA_CODEX_SANDBOX ?? "workspace-write");
-    if ((env.ORCHESTRA_CODEX_NETWORK_ACCESS ?? "1") === "1")
+    args.push("--sandbox", env.PATCHWAKE_CODEX_SANDBOX ?? "workspace-write");
+    if ((env.PATCHWAKE_CODEX_NETWORK_ACCESS ?? "1") === "1")
       args.push("-c", "sandbox_workspace_write.network_access=true");
-    if (env.ORCHESTRA_CODEX_APPROVAL_POLICY)
+    if (env.PATCHWAKE_CODEX_APPROVAL_POLICY)
       args.push(
         "-c",
-        `approval_policy=${JSON.stringify(env.ORCHESTRA_CODEX_APPROVAL_POLICY)}`,
+        `approval_policy=${JSON.stringify(env.PATCHWAKE_CODEX_APPROVAL_POLICY)}`,
       );
   }
   args.push("--json", "--color", "never");
-  if ((env.ORCHESTRA_CODEX_SKIP_GIT_CHECK ?? "1") === "1")
+  if ((env.PATCHWAKE_CODEX_SKIP_GIT_CHECK ?? "1") === "1")
     args.push("--skip-git-repo-check");
-  if (env.ORCHESTRA_MODEL) args.push("--model", env.ORCHESTRA_MODEL);
+  if (env.PATCHWAKE_MODEL) args.push("--model", env.PATCHWAKE_MODEL);
   args.push(...extraArgs);
-  if (env.ORCHESTRA_RESUME === "1") args.push("resume", sessionId);
+  if (env.PATCHWAKE_RESUME === "1") args.push("resume", sessionId);
   args.push(
     standing.trim()
       ? `Standing instructions for this turn:\n\n${standing.trim()}\n\nTask prompt:\n\n${prompt}`
       : prompt,
   );
-  return { executable: env.ORCHESTRA_AGENT_BIN ?? "codex", args };
+  return { executable: env.PATCHWAKE_AGENT_BIN ?? "codex", args };
 }
 function notify(message: object): void {
   if (process.connected && process.send) process.send(message, () => {});
 }
 async function main(): Promise<number> {
-  const stateDir = ".orchestra",
+  const stateDir = ".patchwake",
     logPath = join(stateDir, "agent.log");
-  const sequence = Number(process.env.ORCHESTRA_TURN_SEQUENCE ?? 0);
+  const sequence = Number(process.env.PATCHWAKE_TURN_SEQUENCE ?? 0);
   const result = {
     version: 1,
     sequence,
@@ -102,7 +102,7 @@ async function main(): Promise<number> {
     is_error: null as boolean | null,
     api_error_status: null as unknown,
   };
-  const isClaude = process.env.ORCHESTRA_RUNTIME === "claude-code";
+  const isClaude = process.env.PATCHWAKE_RUNTIME === "claude-code";
   const consume = (line: string): void => {
     let event: unknown;
     try {
@@ -128,8 +128,8 @@ async function main(): Promise<number> {
         typeof event.thread_id === "string" &&
         event.thread_id
       ) {
-        const sessionPath = process.env.ORCHESTRA_SESSION_PATH,
-          readyPath = process.env.ORCHESTRA_SESSION_READY_PATH;
+        const sessionPath = process.env.PATCHWAKE_SESSION_PATH,
+          readyPath = process.env.PATCHWAKE_SESSION_READY_PATH;
         if (!sessionPath || !readyPath)
           throw new Error("session paths missing");
         writeTextAtomic(sessionPath, event.thread_id + "\n");

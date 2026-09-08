@@ -3,24 +3,24 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { TestContext } from "node:test";
 import { setTimeout } from "node:timers/promises";
-import { Engine } from "../orchestra/engine.js";
-import type { EngineConfig } from "../orchestra/engine.js";
-import { health, OK, workItem } from "../orchestra/models.js";
+import { Engine } from "../patchwake/engine.js";
+import type { EngineConfig } from "../patchwake/engine.js";
+import { health, OK, workItem } from "../patchwake/models.js";
 import type {
   RunSnapshot,
   TaskObservation,
   WorkItem,
-} from "../orchestra/models.js";
+} from "../patchwake/models.js";
 import type {
   AgentRuntime,
   Board,
   ActivitySource,
   Channel,
-} from "../orchestra/ports.js";
-import { FileStateStore, writeJsonAtomic } from "../orchestra/state.js";
+} from "../patchwake/ports.js";
+import { FileStateStore, writeJsonAtomic } from "../patchwake/state.js";
 
 export function temporary(t: TestContext): string {
-  const path = mkdtempSync(join(tmpdir(), "orchestra-test-"));
+  const path = mkdtempSync(join(tmpdir(), "patchwake-test-"));
   t.after(() => rmSync(path, { recursive: true, force: true }));
   return path;
 }

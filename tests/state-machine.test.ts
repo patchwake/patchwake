@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { deriveState } from "../orchestra/state-machine.js";
+import { deriveState } from "../patchwake/state-machine.js";
 type StateInput = Parameters<typeof deriveState>[0];
 const state = (overrides: Partial<StateInput> = {}) =>
   deriveState({

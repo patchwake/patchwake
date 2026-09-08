@@ -3,12 +3,12 @@ import type { TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { chmodSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { FileStateStore, nowSeconds, readJson } from "../orchestra/state.js";
-import { ClaudeCodeRuntime, CodexCliRuntime } from "../orchestra/runtime.js";
-import type { CodexRuntimeConfig } from "../orchestra/runtime.js";
-import { buildCommand } from "../orchestra/worker.js";
+import { FileStateStore, nowSeconds, readJson } from "../patchwake/state.js";
+import { ClaudeCodeRuntime, CodexCliRuntime } from "../patchwake/runtime.js";
+import type { CodexRuntimeConfig } from "../patchwake/runtime.js";
+import { buildCommand } from "../patchwake/worker.js";
 import { temporary, waitFor, work } from "./helpers.js";
-import { isRecord } from "../orchestra/json.js";
+import { isRecord } from "../patchwake/json.js";
 
 function environment(t: TestContext, values: Record<string, string>): void {
   const saved = Object.fromEntries(
@@ -268,9 +268,9 @@ test("Codex configuration rejects invalid policies and bypass is explicit", (t) 
   const system = join(root, "absent.md");
   mkdirSync(join(root, "unused"));
   const safe = buildCommand({
-    ORCHESTRA_SYSTEM_PROMPT_FILE: system,
-    ORCHESTRA_RUNTIME: "codex-cli",
-    ORCHESTRA_PROMPT: "hello",
+    PATCHWAKE_SYSTEM_PROMPT_FILE: system,
+    PATCHWAKE_RUNTIME: "codex-cli",
+    PATCHWAKE_PROMPT: "hello",
   });
   assert.ok(safe.args.includes("--sandbox"));
   assert.equal(
@@ -278,8 +278,8 @@ test("Codex configuration rejects invalid policies and bypass is explicit", (t) 
     false,
   );
   const bypass = buildCommand({
-    ORCHESTRA_SYSTEM_PROMPT_FILE: system,
-    ORCHESTRA_CODEX_DANGEROUS_BYPASS: "1",
+    PATCHWAKE_SYSTEM_PROMPT_FILE: system,
+    PATCHWAKE_CODEX_DANGEROUS_BYPASS: "1",
   });
   assert.ok(bypass.args.includes("--dangerously-bypass-approvals-and-sandbox"));
   assert.equal(bypass.args.includes("--sandbox"), false);

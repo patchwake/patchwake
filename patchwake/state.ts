@@ -27,7 +27,7 @@ import { workItem } from "./models.js";
 import { hasCode, isRecord, number, record, string } from "./json.js";
 import { deriveState } from "./state-machine.js";
 
-export const STATE_DIR = ".orchestra";
+export const STATE_DIR = ".patchwake";
 export const START_GRACE_SECONDS = 30;
 const SAFE_KEY = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$(?![\s\S])/;
 const TEMPLATE_SUFFIXES = new Set([
@@ -136,7 +136,7 @@ export class FileStateStore {
       release = acquireLock(join(this.cacheDir, "tick.lock"));
     } catch (error) {
       if (error instanceof LockBusy)
-        throw new TickAlreadyRunning("another orchestra tick is active");
+        throw new TickAlreadyRunning("another patchwake tick is active");
       throw error;
     }
     try {

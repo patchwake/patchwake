@@ -6,20 +6,20 @@ import {
   WARNING,
   observation,
   workItem,
-} from "../../orchestra/models.js";
+} from "../../patchwake/models.js";
 import type {
   Activity,
   HealthReport,
   TaskObservation,
   WaitCondition,
   WorkItem,
-} from "../../orchestra/models.js";
+} from "../../patchwake/models.js";
 import type {
   ActivitySource,
   Awaitable,
   Board,
-} from "../../orchestra/ports.js";
-import { isRecord, record, string } from "../../orchestra/json.js";
+} from "../../patchwake/ports.js";
+import { isRecord, record, string } from "../../patchwake/json.js";
 
 export interface HttpClient {
   get(url: string): Awaitable<readonly [unknown, Headers]>;
@@ -181,7 +181,7 @@ export class GitHubActivitySource implements ActivitySource {
         Authorization: `Bearer ${config.token}`,
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "agent-orchestra-example",
+        "User-Agent": "patchwake-example",
       });
   }
   async observe(

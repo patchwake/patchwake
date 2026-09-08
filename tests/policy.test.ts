@@ -5,8 +5,8 @@ import {
   advanceSeen,
   freshActivities,
   sortCandidates,
-} from "../orchestra/policy.js";
-import type { Activity } from "../orchestra/models.js";
+} from "../patchwake/policy.js";
+import type { Activity } from "../patchwake/models.js";
 
 const event = (overrides: Partial<Activity> = {}): Activity => ({
   stream: "github:r:1:comments",

@@ -2,10 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { basename } from "node:path";
-import { Engine } from "../orchestra/engine.js";
-import { health, observation, OK } from "../orchestra/models.js";
-import type { Activity } from "../orchestra/models.js";
-import { writeJsonAtomic } from "../orchestra/state.js";
+import { Engine } from "../patchwake/engine.js";
+import { health, observation, OK } from "../patchwake/models.js";
+import type { Activity } from "../patchwake/models.js";
+import { writeJsonAtomic } from "../patchwake/state.js";
 import { FakeSource, makeEngine, work } from "./helpers.js";
 
 const activity: Activity = {

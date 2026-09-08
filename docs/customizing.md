@@ -1,7 +1,7 @@
 # Build a custom orchestrator
 
 Most custom workflows need three adapters and one composition module. Read
-`orchestra/ports.ts` alongside the working `examples/trello_github/` example.
+`patchwake/ports.ts` alongside the working `examples/trello_github/` example.
 Ports accept synchronous results or promises; use `async` methods for network
 transports and call `await engine.tick()` in the composition.
 
@@ -55,7 +55,7 @@ atomically. Pass credentials into agent turns only through the runtime config's
 also use authentication already stored under its home directory.
 
 Select either stock runtime in composition, as the Trello/GitHub example does
-with `ORCHESTRA_AGENT_ENGINE`. Implement `AgentRuntime` when another CLI or
+with `PATCHWAKE_AGENT_ENGINE`. Implement `AgentRuntime` when another CLI or
 hosted agent needs different session and liveness mechanics. The runtime owns
 its session namespace and must return success only when the turn was actually
 created; `isAlive()` must not rely only on a stale PID.
@@ -95,8 +95,8 @@ single real task before scheduling recurring ticks.
 
 ```ts
 import { Engine, FileStateStore, ClaudeCodeRuntime, ConsoleChannel,
-  health, OK, workItem } from "agent-orchestra";
-import type { Board } from "agent-orchestra";
+  health, OK, workItem } from "patchwake";
+import type { Board } from "patchwake";
 
 const board: Board = {
   name: "example-board",

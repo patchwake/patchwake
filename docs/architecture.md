@@ -1,6 +1,6 @@
 # Architecture
 
-Orchestra is a supervisor, not an agent framework. It repeatedly decides which
+Patchwake is a supervisor, not an agent framework. It repeatedly decides which
 existing task session deserves one more unattended turn.
 
 ## Tick flow
@@ -49,7 +49,7 @@ Any assigned state -> STOPPING -> STOPPED when the board drops the task.
 
 The state is derived from lock ownership plus `turn.json` and `status.json`.
 A PID alone is never trusted because operating systems reuse PIDs. The worker
-holds `.orchestra/turn.lock` for its full lifetime.
+holds `.patchwake/turn.lock` for its full lifetime.
 
 The Node.js supervisor acquires this OS lock before writing turn intent and
 passes the locked file descriptor to the detached worker. The worker acknowledges
@@ -66,7 +66,7 @@ Linux and macOS. Durable JSON uses snake_case keys and Unix-second timestamps.
 
 ## Durable per-task contract
 
-Each claim lives in `var/work/<task-key>/` and contains a `.orchestra/`
+Each claim lives in `var/work/<task-key>/` and contains a `.patchwake/`
 directory:
 
 | File | Meaning |

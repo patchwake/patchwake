@@ -6,9 +6,9 @@ import {
   HealthChangeChannel,
   healthChanged,
   JsonlAuditChannel,
-} from "../orchestra/channels.js";
-import { health, ERROR, OK } from "../orchestra/models.js";
-import type { HealthReport, TickReport } from "../orchestra/models.js";
+} from "../patchwake/channels.js";
+import { health, ERROR, OK } from "../patchwake/models.js";
+import type { HealthReport, TickReport } from "../patchwake/models.js";
 import { temporary } from "./helpers.js";
 const report = (
   values: Record<string, HealthReport>,

@@ -1,9 +1,9 @@
 ---
 name: build-orchestrator
-description: Build or adapt a task-driven agent orchestrator from the Orchestra repository. Use when composing a custom board, code-host activity source, agent runtime, notification channel, or unattended per-task workflow; do not use for ordinary application features unrelated to orchestration.
+description: Build or adapt a task-driven agent orchestrator from the Patchwake repository. Use when composing a custom board, code-host activity source, agent runtime, notification channel, or unattended per-task workflow; do not use for ordinary application features unrelated to orchestration.
 ---
 
-# Build an Orchestra workflow
+# Build a Patchwake workflow
 
 Use the repository as a set of composable ports and tested lifecycle policy.
 Prefer a thin composition plus new adapters over copying or specializing the
@@ -12,7 +12,7 @@ engine.
 ## Start from the live contracts
 
 1. Read `docs/architecture.md` and `docs/customizing.md` in the repository.
-2. Read `orchestra/ports.ts`, `orchestra/models.ts`, and the composition closest
+2. Read `patchwake/ports.ts`, `patchwake/models.ts`, and the composition closest
    to the requested providers under `examples/`.
 3. Read [references/contracts.md](references/contracts.md) when implementing or
    changing an adapter or runtime.

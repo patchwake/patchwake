@@ -32,7 +32,7 @@ if (["sleep", "state-error"].includes(process.env.FAKE_MODE)) {
 } else if (process.env.FAKE_MODE === "crash") {
   process.stderr.write("injected failure\n");
   process.exitCode = 7;
-} else if (process.env.ORCHESTRA_RUNTIME === "claude-code") {
+} else if (process.env.PATCHWAKE_RUNTIME === "claude-code") {
   emit({
     type: "result",
     total_cost_usd: 0.25,

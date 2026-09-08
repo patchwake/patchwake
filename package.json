@@ -1,5 +1,5 @@
 {
-  "name": "agent-orchestra",
+  "name": "patchwake",
   "version": "0.2.0",
   "description": "A provider-neutral foundation for task-driven agent orchestrators",
   "type": "module",
@@ -10,23 +10,23 @@
     "darwin",
     "linux"
   ],
-  "main": "./dist/orchestra/index.js",
-  "types": "./dist/orchestra/index.d.ts",
+  "main": "./dist/patchwake/index.js",
+  "types": "./dist/patchwake/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/orchestra/index.d.ts",
-      "import": "./dist/orchestra/index.js"
+      "types": "./dist/patchwake/index.d.ts",
+      "import": "./dist/patchwake/index.js"
     },
     "./*": {
-      "types": "./dist/orchestra/*.d.ts",
-      "import": "./dist/orchestra/*.js"
+      "types": "./dist/patchwake/*.d.ts",
+      "import": "./dist/patchwake/*.js"
     }
   },
   "bin": {
-    "orchestra-trello-github": "./dist/examples/trello_github/orchestrator.js"
+    "patchwake-trello-github": "./dist/examples/trello_github/orchestrator.js"
   },
   "files": [
-    "dist/orchestra",
+    "dist/patchwake",
     "dist/examples",
     "templates",
     "docs",
@@ -37,8 +37,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.test.json --noEmit",
-    "format": "prettier --write orchestra examples tests package.json tsconfig*.json",
-    "format:check": "prettier --check orchestra examples tests package.json tsconfig*.json",
+    "format": "prettier --write patchwake examples tests package.json tsconfig*.json",
+    "format:check": "prettier --check patchwake examples tests package.json tsconfig*.json",
     "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/*.test.js",
     "start": "node dist/examples/trello_github/orchestrator.js",
     "prepack": "npm run build"

@@ -19,5 +19,5 @@
     "noEmitOnError": true,
     "types": ["node"]
   },
-  "include": ["orchestra/**/*.ts", "examples/**/*.ts"]
+  "include": ["patchwake/**/*.ts", "examples/**/*.ts"]
 }

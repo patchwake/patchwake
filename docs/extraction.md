@@ -1,7 +1,7 @@
 # What was extracted
 
 The source worker combined a YouTrack assignment plate, GitLab and GitHub
-observation, Slack health/status reporting, and Claude Code sessions. Orchestra
+observation, Slack health/status reporting, and Claude Code sessions. Patchwake
 separates the mechanics that survived that production use from the policy that
 belonged to one organization.
 

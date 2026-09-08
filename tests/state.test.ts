@@ -12,8 +12,8 @@ import {
   lockIsHeld,
   TickAlreadyRunning,
   writeJsonAtomic,
-} from "../orchestra/state.js";
-import { workItem } from "../orchestra/models.js";
+} from "../patchwake/state.js";
+import { workItem } from "../patchwake/models.js";
 import { temporary, waitFor, work } from "./helpers.js";
 
 test("claims atomically, substitutes only text templates, and keeps sessions namespaced", (t) => {
@@ -92,7 +92,7 @@ test("OS locks release on process death and stale lock files do not imply livene
     fileURLToPath(
       new URL("../../tests/fixtures/lock-holder.mjs", import.meta.url),
     ),
-    [path, new URL("../orchestra/state.js", import.meta.url).href],
+    [path, new URL("../patchwake/state.js", import.meta.url).href],
     { silent: true },
   );
   t.after(() => {

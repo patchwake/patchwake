@@ -138,14 +138,14 @@ abstract class DetachedCliRuntime implements AgentRuntime {
         if (process.env[name] !== undefined) env[name] = process.env[name];
       }
       Object.assign(env, workerEnvironment, {
-        ORCHESTRA_RUNTIME: this.name,
-        ORCHESTRA_AGENT_BIN: executable,
-        ORCHESTRA_PROMPT: prompt,
-        ORCHESTRA_RESUME: resume ? "1" : "0",
-        ORCHESTRA_TURN_SEQUENCE: String(sequence),
-        ORCHESTRA_MODEL: config.model ?? "",
-        ORCHESTRA_EXTRA_ARGS: JSON.stringify(config.extraArgs ?? []),
-        ORCHESTRA_SYSTEM_PROMPT_FILE: config.systemPromptFile ?? "SYSTEM.md",
+        PATCHWAKE_RUNTIME: this.name,
+        PATCHWAKE_AGENT_BIN: executable,
+        PATCHWAKE_PROMPT: prompt,
+        PATCHWAKE_RESUME: resume ? "1" : "0",
+        PATCHWAKE_TURN_SEQUENCE: String(sequence),
+        PATCHWAKE_MODEL: config.model ?? "",
+        PATCHWAKE_EXTRA_ARGS: JSON.stringify(config.extraArgs ?? []),
+        PATCHWAKE_SYSTEM_PROMPT_FILE: config.systemPromptFile ?? "SYSTEM.md",
       });
       const logFd = openSync(this.store.statePath(taskDir, "spawn.log"), "a");
       let child;
@@ -292,8 +292,8 @@ export class ClaudeCodeRuntime extends DetachedCliRuntime {
       this.config,
       this.config.executable ?? "claude",
       {
-        ORCHESTRA_SESSION_ID: sessionId,
-        ORCHESTRA_PERMISSION_MODE: this.config.permissionMode ?? "default",
+        PATCHWAKE_SESSION_ID: sessionId,
+        PATCHWAKE_PERMISSION_MODE: this.config.permissionMode ?? "default",
       },
     );
   }
@@ -336,21 +336,21 @@ export class CodexCliRuntime extends DetachedCliRuntime {
       this.config,
       this.config.executable ?? "codex",
       {
-        ORCHESTRA_SESSION_ID: sessionId,
-        ORCHESTRA_SESSION_PATH: this.store.sessionPath(taskDir, this.name),
-        ORCHESTRA_SESSION_READY_PATH: this.store.sessionReadyPath(
+        PATCHWAKE_SESSION_ID: sessionId,
+        PATCHWAKE_SESSION_PATH: this.store.sessionPath(taskDir, this.name),
+        PATCHWAKE_SESSION_READY_PATH: this.store.sessionReadyPath(
           taskDir,
           this.name,
         ),
-        ORCHESTRA_CODEX_SANDBOX: this.config.sandbox ?? "workspace-write",
-        ORCHESTRA_CODEX_NETWORK_ACCESS:
+        PATCHWAKE_CODEX_SANDBOX: this.config.sandbox ?? "workspace-write",
+        PATCHWAKE_CODEX_NETWORK_ACCESS:
           (this.config.networkAccess ?? true) ? "1" : "0",
-        ORCHESTRA_CODEX_APPROVAL_POLICY: this.config.approvalPolicy ?? "never",
-        ORCHESTRA_CODEX_DANGEROUS_BYPASS: this.config
+        PATCHWAKE_CODEX_APPROVAL_POLICY: this.config.approvalPolicy ?? "never",
+        PATCHWAKE_CODEX_DANGEROUS_BYPASS: this.config
           .dangerouslyBypassApprovalsAndSandbox
           ? "1"
           : "0",
-        ORCHESTRA_CODEX_SKIP_GIT_CHECK:
+        PATCHWAKE_CODEX_SKIP_GIT_CHECK:
           (this.config.skipGitRepoCheck ?? true) ? "1" : "0",
       },
     );
