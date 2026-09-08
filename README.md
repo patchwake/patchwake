@@ -1,7 +1,61 @@
 # Patchwake
 
-Patchwake is a small, provider-neutral foundation for supervising one long-lived
-agent session per task. A scheduler runs a short **tick** repeatedly:
+**Put your coding agents to work. Keep them moving.**
+
+Build custom workflows around the coding agents you already use. Patchwake
+connects your boards, repositories, and communication tools to keep work flowing.
+
+Let Claude Code or Codex CLI pick up a task, open a pull request, and return to
+the same session when a reviewer requests changes or CI fails. You define the
+workflow; Patchwake handles when to start, when to resume, and where to send
+updates.
+
+## Define it. Run it.
+
+Describe your workflow in plain language: where tasks come from, what the agent
+should do, and where updates go. Open this repository in your coding agent and
+give it a prompt like this:
+
+```text
+Read skills/build-orchestrator/SKILL.md and build my workflow:
+
+- Pick up Trello cards in the "Ready" list.
+- Use each card's repo:owner/name label to select its GitHub repository.
+- Run Codex CLI to implement the task and open a pull request.
+- Resume the same session when reviewers request changes or CI fails.
+- Send health changes to Slack. Never merge automatically.
+- Run at most two agent turns at once; check for work every five minutes.
+
+Create examples/my_workflow/orchestrator.ts with --dry-run and --status options.
+Reuse the Trello/GitHub example and add the Slack health adapter. Document the
+required environment variables and explicitly allowlist credentials needed by
+the agent. Add tests and scheduler instructions; validate with fixtures first.
+```
+
+The coding agent turns that description into TypeScript adapters, task
+instructions, and an executable workflow. After it creates the files, set the
+documented environment variables and install and authenticate your chosen agent
+CLI. Then run from the repository root:
+
+```bash
+npm ci
+npm run build
+npm test
+node dist/examples/my_workflow/orchestrator.js --dry-run  # preview decisions
+node dist/examples/my_workflow/orchestrator.js            # run one tick
+node dist/examples/my_workflow/orchestrator.js --status    # inspect local tasks
+```
+
+Schedule the same command every five minutes on a persistent host to keep the
+workflow running. Each tick checks for work and starts or resumes the appropriate
+agent sessions; agent turns continue between ticks. See [Try it](#try-it) for
+build prerequisites and [Build your own workflow](#build-your-own-workflow) for
+a reusable prompt template. The bundled [Trello + GitHub example](examples/trello_github/)
+is ready to configure if you want to start there.
+
+## How it works
+
+A scheduler runs a short **tick** repeatedly:
 
 ```text
 board + activity sources -> observe -> decide -> act -> notification channels
