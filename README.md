@@ -10,6 +10,8 @@ the same session when a reviewer requests changes or CI fails. You define the
 workflow; Patchwake handles when to start, when to resume, and where to send
 updates.
 
+[Visit the website](https://patchwake.github.io/patchwake/) to explore Patchwake and build a workflow prompt.
+
 ## Define it. Run it.
 
 Describe your workflow in plain language: where tasks come from, what the agent
