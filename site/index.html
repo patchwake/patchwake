@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Run Patchwake locally to put your coding agents to work and keep them moving. Connect your choice of boards, code hosts, and communication tools."
+    />
+    <meta name="theme-color" content="#f5f8ff" />
+    <title>Patchwake — Put your coding agents to work.</title>
+    <link rel="icon" href="./mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="#" aria-label="Patchwake home"
+        ><img src="./mark.svg" width="29" height="29" alt="" />patchwake<span
+          class="brand-dot"
+          >.</span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#build">Build a workflow</a>
+        <a class="repo-link" href="https://github.com/patchwake/patchwake"
+          >GitHub <span aria-hidden="true">↗</span></a
+        >
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero wrap" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">
+            <span class="status-dot"></span> Custom workflows for coding agents
+          </p>
+          <h1 id="hero-title">
+            Put your coding<br />agents to work.<br /><span
+              >Keep them moving.</span
+            >
+          </h1>
+          <p class="hero-description">
+            Build custom workflows around the coding agents and tools you
+            already use. Connect your choice of task board, code host, and
+            communication tools through adapters to keep work flowing.
+          </p>
+          <p class="hero-description">
+            Run Patchwake <strong>locally</strong> on your own machine.
+          </p>
+          <p class="hero-detail">
+            Let Claude Code, Codex, or any agent pick up a task, open a pull
+            request, and return to the same session when a reviewer requests
+            changes or CI fails.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#build"
+              >Define your workflow <span aria-hidden="true">↗</span></a
+            ><a
+              class="text-link"
+              href="https://github.com/patchwake/patchwake/tree/main/examples/trello_github"
+              >Explore the example <span aria-hidden="true">→</span></a
+            >
+          </div>
+          <p class="hero-footnote">
+            TypeScript <span>·</span> Node.js 22+ <span>·</span> Linux + macOS
+          </p>
+        </div>
+
+        <div
+          class="blueprint"
+          aria-label="Example workflow: a Trello task starts an agent session, GitHub activity resumes that session, and a custom channel reports health to Slack."
+        >
+          <div class="blueprint-top">
+            <span>EXAMPLE / 001</span
+            ><span class="blueprint-badge">YOUR RULES</span>
+          </div>
+          <div class="diagram-flow">
+            <div class="diagram-node source">
+              <span class="node-icon board-icon" aria-hidden="true">▥</span>
+              <div>
+                <span class="node-kicker">WORK COMES FROM</span
+                ><strong>Trello / Ready</strong>
+              </div>
+              <span class="node-index">01</span>
+            </div>
+            <div class="diagram-connector"><span>claim a task</span></div>
+            <div class="agent-node">
+              <div class="agent-node-heading">
+                <img src="./mark.svg" alt="" width="25" height="25" /><span
+                  >patchwake</span
+                ><span class="session-badge">SESSION / TASK-42</span>
+              </div>
+              <div class="agent-node-body">
+                <span class="terminal-symbol" aria-hidden="true">›_</span>
+                <div>
+                  <strong>Your coding agent</strong
+                  ><span>Claude Code or Codex CLI</span>
+                </div>
+              </div>
+              <div class="agent-node-footer">
+                <span class="status-dot"></span> One task. One resumable
+                conversation.
+              </div>
+            </div>
+            <div class="diagram-connector">
+              <span>implement → open a PR</span>
+            </div>
+            <div class="diagram-node">
+              <span class="node-icon" aria-hidden="true">⑂</span>
+              <div>
+                <span class="node-kicker">WORK HAPPENS IN</span
+                ><strong>GitHub / Pull request</strong>
+              </div>
+              <span class="node-index">02</span>
+            </div>
+            <div class="feedback-line">
+              <span aria-hidden="true">↳</span> Review or CI activity → resume
+              the same session <span aria-hidden="true">↵</span>
+            </div>
+          </div>
+          <div class="diagram-channel">
+            <span aria-hidden="true">#</span
+            ><span>Health updates → <strong>Slack</strong></span
+            ><span class="custom-tag">CUSTOM ADAPTER</span>
+          </div>
+          <div class="blueprint-bottom">
+            <span>2 concurrent turns</span><span>Check every 5 min</span
+            ><span>No auto-merge</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="capability-strip">
+        <div class="wrap">
+          <span
+            >THE AGENT DOES THE WORK.<br /><strong
+              >YOU DEFINE THE WORKFLOW.</strong
+            ></span
+          ><span>Bring your board</span><span>Choose your agent</span
+          ><span>Keep your conventions</span><span>Run it locally</span>
+        </div>
+      </div>
+
+      <section id="how-it-works" class="section wrap">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 / The moving parts</p>
+            <h2>You define the workflow.<br />Patchwake keeps it moving.</h2>
+          </div>
+          <p>
+            Patchwake handles when to start, when to resume, and where to send
+            updates. Each scheduler tick checks for work, decides what needs
+            attention, and starts or resumes the right agent sessions.
+          </p>
+        </div>
+        <div class="parts-grid">
+          <article>
+            <span class="part-number">01 — OBSERVE</span>
+            <h3>Decide what counts<br />as work.</h3>
+            <p>
+              A board adapter defines assignment. Activity sources turn reviews,
+              comments, and CI changes into signals that wake an agent.
+            </p>
+            <code>Board + ActivitySource</code>
+          </article>
+          <article>
+            <span class="part-number">02 — COORDINATE</span>
+            <h3>Keep the context.<br />Manage the lifecycle.</h3>
+            <p>
+              One resumable session per task, in an isolated directory. The core
+              handles concurrency, priority, crash backoff, and stalled turns.
+            </p>
+            <code>Engine + AgentRuntime</code>
+          </article>
+          <article>
+            <span class="part-number">03 — REPORT</span>
+            <h3>Put updates where<br />you will see them.</h3>
+            <p>
+              Use the included console and audit channels, or add a channel for
+              Slack, Teams, or your own tool. Notifications run last and cannot
+              change scheduling decisions.
+            </p>
+            <code>Channel</code>
+          </article>
+        </div>
+        <div class="included-note">
+          <span class="plus-sign" aria-hidden="true">+</span>
+          <p>
+            <strong>Choose your board and code host independently.</strong>
+            Start with the included Trello + GitHub example and Claude Code or
+            Codex CLI. Build adapters for Jira, Linear, GitLab, Bitbucket, or
+            your own tools to fit the same workflow engine.
+          </p>
+        </div>
+      </section>
+
+      <section id="build" class="builder-section">
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">02 / Make it yours</p>
+              <h2>Define it.<br />Run it.</h2>
+            </div>
+            <p>
+              Describe where tasks come from, what the agent should do, and
+              where updates go. Copy the prompt into your coding agent with the
+              Patchwake repository open. It creates the adapters, task
+              instructions, and executable workflow.
+            </p>
+          </div>
+          <div class="builder">
+            <form class="builder-controls" id="workflow-form">
+              <div class="builder-label">
+                <span class="status-dot"></span> YOUR WORKFLOW
+              </div>
+              <label for="board">Work comes from</label
+              ><select id="board" name="board">
+                <option value="Trello">Trello</option>
+                <option value="Jira">Jira · custom adapter</option>
+                <option value="Linear">Linear · custom adapter</option>
+                <option value="GitHub Issues">
+                  GitHub Issues · custom adapter
+                </option>
+              </select>
+              <label for="runtime">The agent doing the work</label
+              ><select id="runtime" name="runtime">
+                <option value="Codex CLI">Codex CLI</option>
+                <option value="Claude Code">Claude Code</option>
+              </select>
+              <label for="channel">Health updates go to</label
+              ><select id="channel" name="channel">
+                <option value="Slack">Slack · custom adapter</option>
+                <option value="Console">Console · included</option>
+                <option value="Teams">Teams · custom adapter</option>
+              </select>
+              <label for="concurrency">Concurrent agent turns</label
+              ><select id="concurrency" name="concurrency">
+                <option value="1">1 turn</option>
+                <option value="2" selected>2 turns</option>
+                <option value="4">4 turns</option>
+              </select>
+              <p class="builder-hint">
+                This starting prompt uses GitHub for code and reviews; adapt it
+                for your code host.<br />Five-minute ticks. You control merging.
+              </p>
+            </form>
+            <div class="prompt-panel">
+              <div class="panel-toolbar">
+                <span><span class="file-dot"></span> workflow.prompt</span
+                ><button type="button" id="copy-prompt" class="copy-button">
+                  Copy prompt <span aria-hidden="true">⧉</span>
+                </button>
+              </div>
+              <pre id="workflow-prompt" tabindex="0">
+Read skills/build-orchestrator/SKILL.md and build my workflow:
+
+- Pick up Trello cards in the "Ready" list.
+- Use each card's repo:owner/name label to select its GitHub repository.
+- Run Codex CLI to implement the task and open a pull request.
+- Resume the same session when reviewers request changes or CI fails.
+- Send health changes to Slack. Never merge automatically.
+- Run at most 2 agent turns at once; check for work every five minutes.
+
+Create examples/my_workflow/orchestrator.ts with --dry-run and
+--status options. Reuse the Trello/GitHub example and add the
+Slack health adapter. Keep workflow rules in task templates.
+
+Document the required environment variables and explicitly
+allowlist credentials needed by the agent. Add tests and scheduler
+instructions; validate with fixtures first.</pre>
+              <div class="prompt-footer">
+                <span>Plain language in. A TypeScript workflow out.</span
+                ><span id="copy-status" role="status" aria-live="polite"></span>
+              </div>
+            </div>
+          </div>
+          <p class="builder-disclaimer">
+            Your coding agent creates and tests the workflow. Then set its
+            documented environment variables and install and authenticate your
+            chosen agent CLI. Jira, Linear, GitHub Issues, Slack, and Teams
+            require custom adapters. Boards, code hosts, and notification
+            channels can each be replaced independently.
+          </p>
+          <noscript
+            ><p>
+              The default prompt above is ready to copy. Enable JavaScript to
+              customize its choices.
+            </p></noscript
+          >
+        </div>
+      </section>
+
+      <section id="run" class="section wrap run-section">
+        <div class="run-copy">
+          <p class="eyebrow">03 / From prompt to process</p>
+          <h2>Runs locally.<br />On your own machine.</h2>
+          <p>
+            Patchwake runs with your installed agent CLI and stores task state
+            and logs locally. Configure your workflow, then run these commands
+            from the repository root to preview decisions, run a tick, and
+            inspect local task status.
+          </p>
+          <p class="run-requirements">
+            Node.js 22+ · Linux or macOS<br />Python + a C/C++ toolchain to
+            build <code>fs-ext</code>, the only runtime dependency.
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/patchwake/patchwake#try-it"
+            >Read the setup guide <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="run-panel">
+          <div
+            class="run-tabs"
+            role="tablist"
+            aria-label="Workflow run instructions"
+          >
+            <button
+              id="tab-build"
+              role="tab"
+              aria-selected="true"
+              aria-controls="run-code"
+              data-step="build"
+              type="button"
+            >
+              01 Build</button
+            ><button
+              id="tab-preview"
+              role="tab"
+              aria-selected="false"
+              aria-controls="run-code"
+              tabindex="-1"
+              data-step="preview"
+              type="button"
+            >
+              02 Preview</button
+            ><button
+              id="tab-run"
+              role="tab"
+              aria-selected="false"
+              aria-controls="run-code"
+              tabindex="-1"
+              data-step="run"
+              type="button"
+            >
+              03 Run
+            </button>
+          </div>
+          <div
+            id="run-code"
+            role="tabpanel"
+            aria-labelledby="tab-build"
+            tabindex="0"
+          >
+            <pre
+              id="command-code"
+            ><span class="code-comment"># From the repository root</span>
+npm ci
+npm run build
+npm test</pre>
+          </div>
+          <p id="command-description">
+            Install dependencies, compile the workflow, and run the tests.
+          </p>
+          <div class="schedule-note">
+            <span aria-hidden="true">↻</span>
+            <p>
+              Schedule the same command every five minutes with cron or a
+              systemd timer on a persistent host. Agent turns continue between
+              ticks; keep <code>var/</code> on a local filesystem with file
+              locks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="principles wrap">
+        <div>
+          <p class="eyebrow">Designed for the details</p>
+          <h2>The unglamorous parts,<br />already thought through.</h2>
+        </div>
+        <div class="principles-list">
+          <div>
+            <h3>Context survives the next tick.</h3>
+            <p>
+              A runtime-namespaced session ID, append-only log, and file-backed
+              state let each task return to the same conversation between ticks.
+            </p>
+          </div>
+          <div>
+            <h3>An outage isn't an empty board.</h3>
+            <p>
+              An unreadable board is unknown, never empty. Failed observations
+              preserve existing work instead of treating it as unassigned.
+            </p>
+          </div>
+          <div>
+            <h3>Your conventions belong in your code.</h3>
+            <p>
+              Repository mapping, review gates, and merge rules live in your
+              adapters and task instructions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing wrap">
+        <p class="eyebrow">Build around how you work</p>
+        <h2>What's your workflow?</h2>
+        <a class="button primary" href="#build"
+          >Make it your own <span aria-hidden="true">↗</span></a
+        ><a
+          class="closing-docs"
+          href="https://github.com/patchwake/patchwake/blob/main/docs/customizing.md"
+          >Read the extension guide →</a
+        >
+      </section>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="#"
+        ><img src="./mark.svg" width="24" height="24" alt="" />patchwake<span
+          class="brand-dot"
+          >.</span
+        ></a
+      ><span>Small core. Your rules.</span
+      ><a href="https://github.com/patchwake/patchwake">Source on GitHub ↗</a>
+    </footer>
+  </body>
+</html>
