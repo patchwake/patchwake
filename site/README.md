@@ -1,5 +1,7 @@
 # Patchwake landing page
 
+Published at https://patchwake.github.io/patchwake/.
+
 Source for the GitHub Pages landing page. No build step, external
 assets, analytics, or live integration calls are required. The workflow builder
 generates a prompt locally in the browser.
@@ -19,7 +21,6 @@ Relative asset URLs support the GitHub Pages `/patchwake/` project path.
 or the workflow change on `main`, and can also be run manually. Preview tooling,
 repository files, and local design explorations are excluded from the artifact.
 
-GitHub source and documentation links point to the organization repository,
-`patchwake/patchwake`, and require repository access while it is private. Other
-adapters mentioned on the page are explicitly identified as custom
-implementations, not bundled integrations.
+GitHub source and documentation links point to the public organization repository,
+`patchwake/patchwake`. Other adapters mentioned on the page are explicitly
+identified as custom implementations, not bundled integrations.
