@@ -1,0 +1,47 @@
+name: Publish npm packages
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Require a release from main
+        run: git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: npm install --global npm@11
+      - run: npm ci
+      - name: Verify release versions
+        run: node scripts/release.mjs check
+      - name: Pack release artifacts
+        run: |
+          mkdir -p .release
+          npm pack --pack-destination .release
+          npm pack ./packages/create-patchwake --pack-destination .release
+      - name: Publish library, then generator with provenance
+        run: node scripts/release.mjs publish

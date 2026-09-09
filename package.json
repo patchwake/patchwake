@@ -1,6 +1,6 @@
 {
   "name": "patchwake",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A provider-neutral foundation for task-driven agent orchestrators",
   "type": "module",
   "engines": {
@@ -32,17 +32,20 @@
     "docs",
     "skills",
     "examples/trello_github/README.md",
-    ".env.example"
+    ".env.example",
+    "patchwake"
   ],
   "scripts": {
     "site:dev": "node site/preview.mjs",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.test.json --noEmit",
-    "format": "prettier --write patchwake examples tests package.json tsconfig*.json",
-    "format:check": "prettier --check patchwake examples tests package.json tsconfig*.json",
+    "format": "prettier --write patchwake examples tests package.json tsconfig*.json scripts packages/create-patchwake/*.mjs packages/create-patchwake/package.json site/app.js site/index.html .github/workflows",
+    "format:check": "prettier --check patchwake examples tests package.json tsconfig*.json scripts packages/create-patchwake/*.mjs packages/create-patchwake/package.json site/app.js site/index.html .github/workflows",
     "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/*.test.js",
     "start": "node dist/examples/trello_github/orchestrator.js",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test:packaging": "node scripts/test-packaging.mjs",
+    "check": "npm run build && npm run typecheck && npm run format:check && npm test && npm run test:packaging"
   },
   "dependencies": {
     "fs-ext": "^2.1.1"
@@ -55,5 +58,16 @@
     "@types/node": "^22.20.1",
     "prettier": "^3.9.6",
     "typescript": "^7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patchwake/patchwake.git"
+  },
+  "homepage": "https://patchwake.github.io/patchwake/",
+  "bugs": {
+    "url": "https://github.com/patchwake/patchwake/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

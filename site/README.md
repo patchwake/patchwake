@@ -24,3 +24,10 @@ repository files, and local design explorations are excluded from the artifact.
 GitHub source and documentation links point to the public organization repository,
 `patchwake/patchwake`. Other adapters mentioned on the page are explicitly
 identified as custom implementations, not bundled integrations.
+
+The onboarding flow uses `npm create patchwake@latest` and prompts an agent to
+edit `workflow/` in the generated project. Keep the HTML default prompt/commands
+and their JavaScript equivalents aligned. Until both npm packages are released,
+the page explicitly links to the source-install fallback. Remove the availability
+note only after verifying the public initializer command; see
+`docs/publishing.md`. The npm release workflow and Pages deployment are separate.

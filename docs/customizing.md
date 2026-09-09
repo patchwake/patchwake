@@ -1,7 +1,14 @@
 # Build a custom orchestrator
 
-Most custom workflows need three adapters and one composition module. Read
-`patchwake/ports.ts` alongside the working `examples/trello_github/` example.
+Create a project with `npm create patchwake@latest my-workflow`, then open it in
+your coding agent. Until the first npm release, use the source-checkout path in
+the main README. The generator creates `workflow/orchestrator.ts`,
+`workflow/adapters.ts`, task templates, tests, and the build-orchestrator skill.
+
+Most custom workflows need three adapters and one composition module. In a
+generated project, read `node_modules/patchwake/patchwake/ports.ts` alongside
+`workflow/`. In a source checkout, read `patchwake/ports.ts` alongside
+`examples/trello_github/`.
 Ports accept synchronous results or promises; use `async` methods for network
 transports and call `await engine.tick()` in the composition.
 
@@ -119,3 +126,26 @@ await engine.tick({ dryRun: true });
 ```
 
 Compile before scheduling.
+
+## Keep customization separate from the engine
+
+In a generated project, import public contracts from `patchwake` or a subpath
+such as `patchwake/ports`. Edit your local workflow and task templates; never edit
+`node_modules`. The source contracts are bundled for coding agents to inspect.
+Run `npm run build`, `npm run typecheck`, and `npm test` after changing adapters.
+The starter tests use fixtures and prove that a dry tick does not launch agents.
+Add the lifecycle and provider cases above for your custom workflow.
+
+The generated npm run commands load the project's `.env`. The generated
+composition defaults paths to its own project directory, even under a scheduler
+with a different working directory. A `--root` argument or `PATCHWAKE_ROOT`
+environment variable can select another workspace. The bundled npm executable
+instead defaults to the caller's working directory. Preserve `var/` on the same
+persistent host and use absolute paths in scheduler configuration.
+
+Commit the generated lockfile. Pin upgrades with
+`npm install --save-exact patchwake@<version>`, validate with fixtures and a dry
+run, and consult release notes for contract changes. Pause new ticks and let
+active detached turns finish before replacing installed engine code. Local
+workflow files, copied docs, and skills are not overwritten by npm upgrades;
+compare them with the new release's examples when needed.

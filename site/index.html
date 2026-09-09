@@ -48,7 +48,8 @@
             communication tools through adapters to keep work flowing.
           </p>
           <p class="hero-description">
-            Run Patchwake <strong>locally</strong> on your own machine.
+            Run Patchwake <strong>locally</strong> on your own machine. Keep
+            your workflow in its own project and upgrade the engine through npm.
           </p>
           <p class="hero-detail">
             Let Claude Code, Codex, or any agent pick up a task, open a pull
@@ -207,10 +208,18 @@
             <p>
               Describe where tasks come from, what the agent should do, and
               where updates go. Copy the prompt into your coding agent with the
-              Patchwake repository open. It creates the adapters, task
+              generated workflow project open. It adapts the starter, task
               instructions, and executable workflow.
             </p>
           </div>
+          <p class="builder-disclaimer">
+            Start with <code>npm create patchwake@latest my-workflow</code>,
+            then open <code>my-workflow</code> in your coding agent. The npm
+            installer becomes available with the first release; until then,
+            <a href="https://github.com/patchwake/patchwake#try-it-from-source"
+              >use the source setup guide</a
+            >.
+          </p>
           <div class="builder">
             <form class="builder-controls" id="workflow-form">
               <div class="builder-label">
@@ -264,8 +273,8 @@ Read skills/build-orchestrator/SKILL.md and build my workflow:
 - Send health changes to Slack. Never merge automatically.
 - Run at most 2 agent turns at once; check for work every five minutes.
 
-Create examples/my_workflow/orchestrator.ts with --dry-run and
---status options. Reuse the Trello/GitHub example and add the
+Adapt workflow/orchestrator.ts and workflow/adapters.ts; preserve
+--dry-run and --status. Reuse the Trello/GitHub starter and add the
 Slack health adapter. Keep workflow rules in task templates.
 
 Document the required environment variables and explicitly
@@ -278,11 +287,12 @@ instructions; validate with fixtures first.</pre>
             </div>
           </div>
           <p class="builder-disclaimer">
-            Your coding agent creates and tests the workflow. Then set its
-            documented environment variables and install and authenticate your
-            chosen agent CLI. Jira, Linear, GitHub Issues, Slack, and Teams
-            require custom adapters. Boards, code hosts, and notification
-            channels can each be replaced independently.
+            Your coding agent adapts and tests the workflow. Then edit the
+            generated
+            <code>.env</code> with its documented environment variables and
+            install and authenticate your chosen agent CLI. Jira, Linear, GitHub
+            Issues, Slack, and Teams require custom adapters. Boards, code
+            hosts, and notification channels can each be replaced independently.
           </p>
           <noscript
             ><p>
@@ -300,7 +310,7 @@ instructions; validate with fixtures first.</pre>
           <p>
             Patchwake runs with your installed agent CLI and stores task state
             and logs locally. Configure your workflow, then run these commands
-            from the repository root to preview decisions, run a tick, and
+            from your workflow project to preview decisions, run a tick, and
             inspect local task status.
           </p>
           <p class="run-requirements">
@@ -309,7 +319,7 @@ instructions; validate with fixtures first.</pre>
           </p>
           <a
             class="text-link"
-            href="https://github.com/patchwake/patchwake#try-it"
+            href="https://github.com/patchwake/patchwake#start-your-own-workflow"
             >Read the setup guide <span aria-hidden="true">↗</span></a
           >
         </div>
@@ -327,7 +337,7 @@ instructions; validate with fixtures first.</pre>
               data-step="build"
               type="button"
             >
-              01 Build</button
+              01 Create</button
             ><button
               id="tab-preview"
               role="tab"
@@ -358,13 +368,13 @@ instructions; validate with fixtures first.</pre>
           >
             <pre
               id="command-code"
-            ><span class="code-comment"># From the repository root</span>
-npm ci
-npm run build
-npm test</pre>
+            ><span class="code-comment"># Create your editable workflow project</span>
+npm create patchwake@latest my-workflow
+cd my-workflow</pre>
           </div>
           <p id="command-description">
-            Install dependencies, compile the workflow, and run the tests.
+            Create a project with a pinned engine dependency. Open it in your
+            coding agent and use the workflow prompt above.
           </p>
           <div class="schedule-note">
             <span aria-hidden="true">↻</span>

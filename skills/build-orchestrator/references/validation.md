@@ -4,8 +4,10 @@ Read this after composing a workflow and before enabling recurring real ticks.
 
 ## Automated
 
-- Run `npm ci`, `npm run build`, `npm run typecheck`, `npm run format:check`, and
-  `npm test` from the repository root.
+- Run `npm ci`, `npm run build`, `npm run typecheck`, and `npm test` in the
+  workflow project. Run `npm run format:check` as well in a source checkout.
+  Use `npm install` first if the generator ran with `--no-install` and there is
+  no lockfile yet.
 - Add fixture-driven tests for provider normalization and pagination.
 - Test duplicate events, equal cursors, self-authored events, and missing
   `directed` values.
@@ -26,7 +28,10 @@ Read this after composing a workflow and before enabling recurring real ticks.
 ## Operations
 
 - Schedule one finite tick; rely on the repository tick lock for overlap.
-- Use an absolute Node.js path and the built `dist/examples/trello_github/orchestrator.js` entry point under cron.
+- Use an absolute Node.js path and the built `dist/workflow/orchestrator.js`
+  entry point in generated projects. Load credentials with an absolute
+  `--env-file` path. Source checkouts use
+  `dist/examples/trello_github/orchestrator.js` with `--root` set explicitly.
 - Persist `var/` on durable local storage and exclude it from source control.
 - Monitor both component health changes and tasks that reach `GAVE_UP`.
 - Document how an operator stops, re-arms, or archives a claim before unattended
