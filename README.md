@@ -1,5 +1,7 @@
 # Patchwake
 
+[MIT licensed](LICENSE)
+
 **Put your coding agents to work. Keep them moving.**
 
 Build custom workflows around the coding agents you already use. Patchwake
@@ -255,3 +257,14 @@ npm exec -- patchwake-trello-github --root /srv/my-workflow --status
 See [publishing](docs/publishing.md) for package checks, npm bootstrap, trusted
 publishing, and the release process. `npm run check` runs the full validation,
 including installation and execution from actual npm tarballs.
+
+## License
+
+Patchwake's engine, project generator, bundled starter code, task templates,
+and documentation are licensed under the [MIT License](LICENSE).
+You can use them in personal, commercial, and private projects; retain the
+copyright and license notice when redistributing copies or substantial portions.
+Third-party dependencies retain their own licenses.
+
+Generated projects include `PATCHWAKE-LICENSE` for the copied starter material.
+You can choose different terms for your own additions while preserving that notice.

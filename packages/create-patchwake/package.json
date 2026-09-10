@@ -31,5 +31,6 @@
   },
   "scripts": {
     "prepack": "node ../../scripts/prepare-create.mjs"
-  }
+  },
+  "license": "MIT"
 }

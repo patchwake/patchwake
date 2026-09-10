@@ -64,6 +64,25 @@ try {
     readFileSync(join(root, "package.json"), "utf8"),
   ).version;
   assert.equal(manifest.dependencies.patchwake, version);
+  const license = readFileSync(join(root, "LICENSE"), "utf8");
+  assert.equal(
+    readFileSync(join(workflow, "PATCHWAKE-LICENSE"), "utf8"),
+    license,
+  );
+  for (const artifact of [library, creator]) {
+    assert.equal(
+      execFileSync("tar", ["-xOzf", artifact, "package/LICENSE"], {
+        encoding: "utf8",
+      }),
+      license,
+    );
+    const metadata = JSON.parse(
+      execFileSync("tar", ["-xOzf", artifact, "package/package.json"], {
+        encoding: "utf8",
+      }),
+    );
+    assert.equal(metadata.license, "MIT");
+  }
   for (const file of [
     ".gitignore",
     ".env",

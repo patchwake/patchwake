@@ -20,3 +20,9 @@ never overwritten. The generator does not contact task providers or start agents
 This package and `patchwake` are released together from
 [patchwake/patchwake](https://github.com/patchwake/patchwake). Before the first npm
 release, use that repository's source installation and packaging smoke test.
+
+## License
+
+MIT; see the [license](https://github.com/patchwake/patchwake/blob/main/LICENSE).
+The generated starter code, task templates, and docs are also MIT licensed. Generated projects retain the notice in `PATCHWAKE-LICENSE`;
+users can choose different terms for their own additions.
