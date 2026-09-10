@@ -1,0 +1,35 @@
+{
+  "name": "create-patchwake",
+  "version": "0.3.0",
+  "description": "Create a customizable Patchwake agent workflow",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "bin": {
+    "create-patchwake": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "template"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patchwake/patchwake.git",
+    "directory": "packages/create-patchwake"
+  },
+  "homepage": "https://patchwake.github.io/patchwake/",
+  "bugs": {
+    "url": "https://github.com/patchwake/patchwake/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/prepare-create.mjs"
+  }
+}

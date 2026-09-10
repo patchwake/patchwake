@@ -1,19 +1,22 @@
 ---
 name: build-orchestrator
-description: Build or adapt a task-driven agent orchestrator from the Patchwake repository. Use when composing a custom board, code-host activity source, agent runtime, notification channel, or unattended per-task workflow; do not use for ordinary application features unrelated to orchestration.
+description: Build or adapt a task-driven agent orchestrator in a generated Patchwake project or source checkout. Use when composing a custom board, code-host activity source, agent runtime, notification channel, or unattended per-task workflow; do not use for ordinary application features unrelated to orchestration.
 ---
 
 # Build a Patchwake workflow
 
-Use the repository as a set of composable ports and tested lifecycle policy.
+Use Patchwake as a set of composable ports and tested lifecycle policy.
 Prefer a thin composition plus new adapters over copying or specializing the
 engine.
 
 ## Start from the live contracts
 
 1. Read `docs/architecture.md` and `docs/customizing.md` in the repository.
-2. Read `patchwake/ports.ts`, `patchwake/models.ts`, and the composition closest
-   to the requested providers under `examples/`.
+2. In a generated project, read `node_modules/patchwake/patchwake/ports.ts`,
+   `node_modules/patchwake/patchwake/models.ts`, and `workflow/`. In the source
+   checkout, read `patchwake/ports.ts`, `patchwake/models.ts`, and the closest
+   composition under `examples/`. Generated projects import from `patchwake` or
+   `patchwake/<module>`; do not edit the dependency under `node_modules`.
 3. Read [references/contracts.md](references/contracts.md) when implementing or
    changing an adapter or runtime.
 4. Read [references/validation.md](references/validation.md) before enabling
@@ -50,12 +53,14 @@ making them universal.
 - Change the core only when the requested behavior cannot be expressed through
   an existing port; accompany a core change with invariant-focused tests.
 
-Use `examples/trello_github/` as a shape, not as policy to cargo-cult. Preserve
+Use `workflow/` (generated project) or `examples/trello_github/` (source checkout)
+as the starting shape; adapt its policy to the requested workflow. Preserve
 the user's provider conventions and authorization boundaries.
 
 ## Finish with evidence
 
-Run the repository test suite and any adapter-specific tests. Exercise a dry
+Run `npm run build`, `npm run typecheck`, `npm test`, and any adapter-specific
+tests. In the source checkout also run `npm run format:check`. Exercise a dry
 tick with representative provider fixtures or a safe read-only account. Report
 which assignment query, task-to-repository convention, wake policy, credential
 allowlist, concurrency cap, and scheduler command the workflow uses.

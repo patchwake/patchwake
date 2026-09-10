@@ -12,11 +12,26 @@ updates.
 
 [Visit the website](https://patchwake.github.io/patchwake/) to explore Patchwake and build a workflow prompt.
 
-## Define it. Run it.
+## Start your own workflow
 
-Describe your workflow in plain language: where tasks come from, what the agent
-should do, and where updates go. Open this repository in your coding agent and
-give it a prompt like this:
+Create an editable project with Patchwake installed as a pinned dependency:
+
+```bash
+npm create patchwake@latest my-workflow
+cd my-workflow
+```
+
+**Release availability:** these npm commands require the first npm release.
+Until it is published, use [the source checkout](#try-it-from-source). Maintainers
+can follow [the release guide](docs/publishing.md) to bootstrap both packages.
+
+Requires Node.js 22+ on Linux or macOS, Python, and a C/C++ toolchain for native
+file locks. On macOS install Xcode Command Line Tools; on Linux install Python,
+make, and a compiler. The generator installs dependencies and compiles the starter.
+Use `-- --no-install` to generate files only, then run `npm install` and
+`npm run build` yourself. It refuses to overwrite a nonempty directory.
+
+Open **my-workflow** in your coding agent and describe your workflow:
 
 ```text
 Read skills/build-orchestrator/SKILL.md and build my workflow:
@@ -28,32 +43,33 @@ Read skills/build-orchestrator/SKILL.md and build my workflow:
 - Send health changes to Slack. Never merge automatically.
 - Run at most two agent turns at once; check for work every five minutes.
 
-Create examples/my_workflow/orchestrator.ts with --dry-run and --status options.
-Reuse the Trello/GitHub example and add the Slack health adapter. Document the
-required environment variables and explicitly allowlist credentials needed by
-the agent. Add tests and scheduler instructions; validate with fixtures first.
+Adapt workflow/orchestrator.ts and workflow/adapters.ts. Preserve --dry-run
+and --status. Reuse the Trello/GitHub starter and add the Slack health adapter.
+Document environment variables and the agent credential allowlist. Add fixture
+tests and scheduler instructions. Keep workflow rules in templates/task/.
 ```
 
-The coding agent turns that description into TypeScript adapters, task
-instructions, and an executable workflow. After it creates the files, set the
-documented environment variables and install and authenticate your chosen agent
-CLI. Then run from the repository root:
+Edit the generated `.env` and install and authenticate your chosen agent CLI.
+Then run in your workflow project:
 
 ```bash
-npm ci
-npm run build
-npm test
-node dist/examples/my_workflow/orchestrator.js --dry-run  # preview decisions
-node dist/examples/my_workflow/orchestrator.js            # run one tick
-node dist/examples/my_workflow/orchestrator.js --status    # inspect local tasks
+npm run build        # repeat after editing the TypeScript workflow
+npm test             # local fixtures, no external services
+npm run dry-run      # read provider state and preview decisions
+npm start            # run one real tick
+npm run status       # inspect local tasks
 ```
 
-Schedule the same command every five minutes on a persistent host to keep the
-workflow running. Each tick checks for work and starts or resumes the appropriate
-agent sessions; agent turns continue between ticks. See [Try it](#try-it) for
-build prerequisites and [Build your own workflow](#build-your-own-workflow) for
-a reusable prompt template. The bundled [Trello + GitHub example](examples/trello_github/)
-is ready to configure if you want to start there.
+These generated scripts load `.env`. Dry runs do not claim tasks or start agents,
+but do write a local tick lock. Check component health in the report before
+enabling real ticks. The generated README includes an absolute-path cron example.
+Run it on a persistent host: agent turns continue between ticks and state remains
+under your project's `var/` directory.
+
+Your adapters, instructions, and configuration stay in your project. Upgrade the
+engine with `npm install --save-exact patchwake@<version>` and commit the lockfile.
+Stop new ticks and allow active turns to finish before upgrading; retain `var/`.
+See [customization and upgrades](docs/customizing.md).
 
 ## How it works
 
@@ -97,7 +113,14 @@ tests/                        Node test runner tests and fake agent fixtures
 docs/                         architecture and extension guide
 ```
 
-## Try it
+## Try it from source
+
+Use a clone when contributing to the engine or trying it before the npm release.
+
+```bash
+git clone https://github.com/patchwake/patchwake.git
+cd patchwake
+```
 
 Install and build from the repository root:
 
@@ -144,12 +167,19 @@ Read local task status with `npm start -- --status`.
 
 Schedule `node /absolute/path/to/patchwake/dist/examples/trello_github/orchestrator.js`
 with cron or a systemd timer on a persistent host. Use an absolute Node executable
-path and configure credentials in the scheduler environment.
+path, pass `--root /absolute/path/to/patchwake`, and configure credentials in the
+scheduler environment (or use Node's `--env-file=/absolute/path/to/.env`).
 `var/cache/tick.lock` prevents overlapping invocations. Persist `var/` on a local
 filesystem with working `flock` semantics; detached turns need the same host to
 remain running between ticks.
 
 ## Build your own workflow
+
+In a generated project, edit `workflow/orchestrator.ts` and `workflow/adapters.ts`;
+the local skill explains where to find installed contracts. Import from
+`patchwake` or `patchwake/<module>` and keep the engine dependency intact.
+The prompt below is for contributors working inside the source repository.
+
 
 Start with [docs/customizing.md](docs/customizing.md). In Codex, invoke the
 repository skill. The following prompt can be copied and completed with the
@@ -202,3 +232,26 @@ The intended customization surface is composition, not inheritance: implement
 the small interfaces in `patchwake/ports.ts`, choose or implement an
 `AgentRuntime`, assemble everything with `Engine`, and keep provider-specific
 policy in the adapter or task template that owns it.
+
+## Distribution and releases
+
+- `patchwake`: compiled library, type declarations, source contracts, templates,
+  docs, and the optional `patchwake-trello-github` executable.
+- `create-patchwake`: a lightweight generator that copies an editable workflow
+  and installs an exact matching Patchwake version.
+- GitHub: source, examples, contributions, and release automation. Docker is not
+  required for the local workflow.
+
+Existing applications can run `npm install --save-exact patchwake` and import the
+engine directly. The bundled CLI uses `--root`, then `PATCHWAKE_ROOT`, then the
+current directory for state; it uses local `templates/task/` when present and
+bundled task templates otherwise. It never defaults state to the package directory.
+For example, in an application with Patchwake installed:
+
+```sh
+npm exec -- patchwake-trello-github --root /srv/my-workflow --status
+```
+
+See [publishing](docs/publishing.md) for package checks, npm bootstrap, trusted
+publishing, and the release process. `npm run check` runs the full validation,
+including installation and execution from actual npm tarballs.

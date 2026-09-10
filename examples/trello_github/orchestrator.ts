@@ -3,7 +3,7 @@
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { realpathSync } from "node:fs";
+import { existsSync, realpathSync } from "node:fs";
 import {
   ConsoleChannel,
   HealthChangeChannel,
@@ -17,7 +17,10 @@ import { FileStateStore, TickAlreadyRunning } from "../../patchwake/state.js";
 import { errorMessage } from "../../patchwake/json.js";
 import { GitHubActivitySource, TrelloBoard } from "./adapters.js";
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+const PACKAGE_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../..",
+);
 function integer(
   env: NodeJS.ProcessEnv,
   name: string,
@@ -37,17 +40,18 @@ const list = (value: string | undefined): string[] =>
     .filter(Boolean);
 export function buildEngine({
   dryRun = false,
-  root = ROOT,
   env = process.env,
+  root = resolve(env.PATCHWAKE_ROOT || process.cwd()),
+  templateDir = existsSync(join(root, "templates", "task"))
+    ? join(root, "templates", "task")
+    : join(PACKAGE_ROOT, "templates", "task"),
 }: {
   dryRun?: boolean;
   root?: string;
+  templateDir?: string;
   env?: NodeJS.ProcessEnv;
 } = {}): Engine {
-  const store = new FileStateStore(
-    join(root, "var"),
-    join(root, "templates", "task"),
-  );
+  const store = new FileStateStore(join(root, "var"), templateDir);
   const board = new TrelloBoard({
     key: env.TRELLO_KEY ?? "",
     token: env.TRELLO_TOKEN ?? "",
@@ -119,15 +123,19 @@ export async function main(args = process.argv.slice(2)): Promise<number> {
       "dry-run": { type: "boolean" },
       status: { type: "boolean" },
       help: { type: "boolean", short: "h" },
+      root: { type: "string" },
     },
   });
   if (values.help) {
     console.log(
-      "Usage: patchwake-trello-github [--dry-run] [--status]\nRun one Trello + GitHub orchestration tick.",
+      "Usage: patchwake-trello-github [--dry-run] [--status] [--root PATH]\nRun one Trello + GitHub orchestration tick.\nWorkspace: --root, PATCHWAKE_ROOT, or the current directory. State: <workspace>/var.",
     );
     return 0;
   }
-  const engine = buildEngine({ dryRun: values["dry-run"] ?? false });
+  const engine = buildEngine({
+    dryRun: values["dry-run"] ?? false,
+    ...(values.root === undefined ? {} : { root: resolve(values.root) }),
+  });
   if (values.status) {
     for (const [key, snapshot] of Object.entries(await engine.status()).sort(
       ([a], [b]) => (a < b ? -1 : 1),

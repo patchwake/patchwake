@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdirSync } from "node:fs";
+import { join, resolve } from "node:path";
 import {
   GitHubActivitySource,
   JsonHttp,
@@ -24,6 +26,22 @@ class FixtureHttp implements HttpClient {
       : [value, new Headers()];
   }
 }
+test("composition keeps state in the selected workspace and uses local or bundled templates", (t) => {
+  const root = temporary(t);
+  const environment = buildEngine({ env: { PATCHWAKE_ROOT: root } });
+  assert.equal(environment.store.root, join(root, "var"));
+  assert.ok(environment.store.templateDir?.endsWith("templates/task"));
+  assert.notEqual(
+    environment.store.templateDir,
+    join(root, "templates", "task"),
+  );
+  const local = join(root, "custom");
+  mkdirSync(join(local, "templates", "task"), { recursive: true });
+  const explicit = buildEngine({ root: local, env: { PATCHWAKE_ROOT: root } });
+  assert.equal(explicit.store.root, join(local, "var"));
+  assert.equal(explicit.store.templateDir, join(local, "templates", "task"));
+  assert.equal(buildEngine({ env: {} }).store.root, resolve("var"));
+});
 const card = {
   id: "abcdef",
   shortLink: "xyZ12",

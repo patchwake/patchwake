@@ -12,3 +12,5 @@ node_modules/
 .test-dist/
 *.tgz
 *.tsbuildinfo
+/packages/create-patchwake/template/
+/.release/

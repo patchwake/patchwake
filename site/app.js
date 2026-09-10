@@ -21,7 +21,7 @@ function updatePrompt() {
       : `Send health changes to ${channel}.`;
   const composition =
     board === "Trello"
-      ? "Reuse the Trello/GitHub example"
+      ? "Reuse the Trello/GitHub starter"
       : `Reuse Patchwake's engine, file store, and GitHub activity adapter;\nadd the ${board} board adapter`;
   const healthAdapter =
     channel === "Console"
@@ -35,8 +35,8 @@ function updatePrompt() {
 - ${reporting} Never merge automatically.
 - Run at most ${concurrency} agent turn${concurrency === "1" ? "" : "s"} at once; check for work every five minutes.
 
-Create examples/my_workflow/orchestrator.ts with --dry-run and
---status options. ${composition}${healthAdapter} Keep workflow rules in task templates.
+Adapt workflow/orchestrator.ts and workflow/adapters.ts; preserve
+--dry-run and --status. ${composition}${healthAdapter} Keep workflow rules in task templates.
 
 Document the required environment variables and explicitly
 allowlist credentials needed by the agent. Add tests and scheduler
@@ -62,15 +62,15 @@ document.querySelector("#copy-prompt").addEventListener("click", async () => {
 
 const steps = {
   build: [
-    "# From the repository root\nnpm ci\nnpm run build\nnpm test",
-    "Install dependencies, compile the workflow, and run the tests.",
+    "# Create your editable workflow project\nnpm create patchwake@latest my-workflow\ncd my-workflow",
+    "Create a project with a pinned engine dependency. Open it in your coding agent and use the workflow prompt above.",
   ],
   preview: [
-    "# After your agent creates my_workflow\nnode dist/examples/my_workflow/orchestrator.js --dry-run",
+    "# After customizing the workflow and editing .env\nnpm run build\nnpm test\nnpm run dry-run",
     "Read provider state and preview decisions without claiming tasks or starting agent turns.",
   ],
   run: [
-    "# Run one tick, then inspect task state\nnode dist/examples/my_workflow/orchestrator.js\nnode dist/examples/my_workflow/orchestrator.js --status",
+    "# Run one tick, then inspect task state\nnpm start\nnpm run status",
     "Start or resume eligible tasks. Agent turns continue after the tick exits.",
   ],
 };
