@@ -1,6 +1,5 @@
 import {
   cpSync,
-  existsSync,
   mkdirSync,
   readFileSync,
   rmSync,
@@ -115,12 +114,12 @@ writeFileSync(
     2,
   ) + "\n",
 );
-if (existsSync(resolve(root, "LICENSE"))) {
-  cpSync(
-    resolve(root, "LICENSE"),
-    resolve(root, "packages/create-patchwake/LICENSE"),
-  );
-}
+// Preserve the upstream notice in both the npm package and copied starter.
+cpSync(
+  resolve(root, "LICENSE"),
+  resolve(root, "packages/create-patchwake/LICENSE"),
+);
+cpSync(resolve(root, "LICENSE"), resolve(target, "PATCHWAKE-LICENSE"));
 console.log(
   `Prepared create-patchwake ${creator.version} with patchwake ${manifest.version}.`,
 );

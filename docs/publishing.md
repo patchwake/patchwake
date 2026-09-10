@@ -42,15 +42,15 @@ binaries or an alternative locking implementation are outside this release.
 ## One-time npm setup
 
 The packages were not present on the public registry when this setup was written.
-The repository does not configure npm account ownership or grant a license by
-itself. Before first publication:
+Patchwake is MIT licensed. npm account ownership and trusted publishing still
+require account setup. Before first publication:
 
 1. Confirm ownership/availability of `patchwake` and `create-patchwake` with the
    npm account that will maintain them. If names must change, update both
    manifests, the generator's dependency name, imports, docs, and website together.
-2. Set the project's approved license in the package manifests and add `LICENSE`.
-   The generator preparation copies that license into its package. Do not infer
-   a license solely from the repository being public.
+2. Verify both manifests declare `MIT` and both packed packages include `LICENSE`.
+   The generator also preserves the notice as `PATCHWAKE-LICENSE` in generated
+   projects for the copied starter code, templates, and documentation.
 3. Merge the reviewed setup and run all validation from a clean checkout of
    `main`. Inspect the packed file lists (`tar -tzf .release/<package>.tgz`).
    `output/`, `.env`, and runtime state are excluded from the packages.

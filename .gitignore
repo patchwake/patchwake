@@ -14,3 +14,4 @@ node_modules/
 *.tsbuildinfo
 /packages/create-patchwake/template/
 /.release/
+/packages/create-patchwake/LICENSE

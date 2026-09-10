@@ -86,3 +86,10 @@ replace them. Read the release notes and compare updated examples when upgrading
 Stop new ticks and let active turns finish before upgrading: detached workers
 load code from the installed dependency. Keep `var/` intact. Do not rerun the
 generator over this directory; it refuses nonempty destinations.
+
+## License of the starter
+
+The copied Patchwake starter code, task templates, and documentation are MIT
+licensed; see [PATCHWAKE-LICENSE](PATCHWAKE-LICENSE). Retain this notice when
+redistributing copies or substantial portions of that material. You can choose
+different terms for your own additions. Dependencies retain their own licenses.
