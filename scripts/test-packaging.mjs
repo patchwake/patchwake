@@ -43,6 +43,39 @@ function run(args, cwd, env = {}) {
   });
 }
 try {
+  // Reproduce a dirty source checkout even on CI, where ignored Python caches
+  // left by earlier versions of the project would otherwise be absent.
+  const inventoryFixture = join(temporary, "inventory-fixture");
+  mkdirSync(join(inventoryFixture, "patchwake/__pycache__"), {
+    recursive: true,
+  });
+  const sourceManifest = JSON.parse(
+    readFileSync(join(root, "package.json"), "utf8"),
+  );
+  writeFileSync(
+    join(inventoryFixture, "package.json"),
+    JSON.stringify({
+      name: "patchwake-inventory-fixture",
+      version: "1.0.0",
+      files: sourceManifest.files,
+    }),
+  );
+  writeFileSync(join(inventoryFixture, "patchwake/ports.ts"), "export {};\n");
+  writeFileSync(
+    join(inventoryFixture, "patchwake/__pycache__/ports.pyc"),
+    "stale bytecode fixture",
+  );
+  writeFileSync(
+    join(inventoryFixture, "patchwake/local-notes.txt"),
+    "local fixture",
+  );
+  const [preview] = JSON.parse(
+    npm(["pack", "--dry-run", "--ignore-scripts", "--json"], inventoryFixture),
+  );
+  assert.deepEqual(preview.files.map((file) => file.path).sort(), [
+    "package.json",
+    "patchwake/ports.ts",
+  ]);
   const library = pack(root);
   const creator = pack(resolve(root, "packages/create-patchwake"));
   const runner = join(temporary, "runner");
@@ -177,6 +210,8 @@ try {
   assert.ok(!inventory.includes("package/.env\n"));
   assert.ok(!inventory.includes("package/var/"));
   assert.ok(!inventory.includes("package/output/"));
+  assert.ok(!inventory.includes("__pycache__/"));
+  assert.ok(!/\.py[co](?:\n|$)/.test(inventory));
   // Installed CLI runs via npm's executable link, with state outside package.
   const unrelated = join(temporary, "unrelated");
   mkdirSync(unrelated);
