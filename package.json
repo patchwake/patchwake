@@ -33,7 +33,7 @@
     "skills",
     "examples/trello_github/README.md",
     ".env.example",
-    "patchwake"
+    "patchwake/*.ts"
   ],
   "scripts": {
     "site:dev": "node site/preview.mjs",

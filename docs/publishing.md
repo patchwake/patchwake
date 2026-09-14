@@ -85,6 +85,28 @@ require account setup. Before first publication:
    generator README, and customization guide after both packages are available.
    Publish release notes on GitHub. Pages deploys on merge independently of npm.
 
+## Publish returns E404 or E401
+
+A first publication does not require an existing package. A `PUT` returning E404
+can also indicate an authentication or permission failure. Check the active
+identity against the same registry used for publishing:
+
+```sh
+npm whoami --registry=https://registry.npmjs.org
+```
+
+If this returns E401, authenticate again and verify the username before retrying:
+
+```sh
+npm login --auth-type=web --registry=https://registry.npmjs.org
+npm whoami --registry=https://registry.npmjs.org
+```
+
+Complete any browser or two-factor authentication prompts yourself. If `whoami`
+succeeds but publishing still fails, check the account's package permissions and
+publishing policy; do not rename the package solely because a publish returned
+E404. See [npm login](https://docs.npmjs.com/cli/v11/commands/npm-login/).
+
 ## Subsequent releases
 
 1. Change `version` in `package.json` and
