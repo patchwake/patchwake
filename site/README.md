@@ -3,8 +3,7 @@
 Published at https://patchwake.github.io/patchwake/.
 
 Source for the GitHub Pages landing page. No build step, external
-assets, analytics, or live integration calls are required. The workflow builder
-generates a prompt locally in the browser.
+assets, analytics, or live integration calls are required.
 
 From the repository root:
 
@@ -25,21 +24,25 @@ GitHub source and documentation links point to the public organization repositor
 `patchwake/patchwake`. Other adapters mentioned on the page are explicitly
 identified as custom implementations, not bundled integrations.
 
-The builder defaults to Trello, Codex CLI, the included console channel, and one
-agent turn. Its optional plan-approval choice asks the coding agent to implement
-a spec/plan draft PR and human approval via comments. This is a task-template
-convention, not an engine-enforced gate. The example and prompt must preserve
-that distinction and the separate agent/human GitHub identity requirement.
-Approvals use a new `@bot approve plan` comment without a SHA, verified against
-the latest published documents. For Trello, this choice also requests the
-Ready → Doing → Review → Done lifecycle: new work only from Ready, existing
-claims retained in Doing/Review, agent-owned moves, and Done after a human merge.
-This lifecycle requires a custom adapter and is not bundled starter behavior.
+The hero carousel shares one diagram between the included Trello + GitHub +
+Codex CLI starter and a Jira + GitLab + Claude Code example. The second example
+explicitly requires custom Jira and GitLab adapters, with spec, plan, and review
+gates implemented through custom task instructions rather than built-in engine
+approval gates. Its draft merge request holds the spec and plan. The carousel
+starts automatically and rotates every seven seconds. It pauses on hover or
+while the tab is hidden, and stops for the rest of the page visit on keyboard
+focus or selection of 1 or 2. There is no Play/Pause control. Reduced-motion
+preferences disable automatic rotation by default. Without JavaScript, the Trello diagram remains
+visible and carousel controls stay hidden.
 
 `docs/first-task.md` bridges workflow creation and the first running task. It is
-also copied into generated projects. The run panel covers Create, Preview, Run,
-and Schedule; scheduler details belong in the generated project's README. The
-bundled Trello adapter requires list IDs, not names or automatic Ready lookup.
+also copied into generated projects. The run panel follows the intro, before
+the moving parts. It covers Create, Customize, Preview, Run, and Schedule.
+Customize directs users to open their project in a coding agent and includes
+an editable example prompt invoking `skills/build-orchestrator/SKILL.md`.
+The main calls to action link to this setup section. Scheduler details belong
+in the generated project's README. The bundled Trello adapter requires list
+IDs, not names or automatic Ready lookup.
 
 The onboarding flow uses `npm create patchwake@latest` and prompts an agent to
 edit `workflow/` in the generated project. Keep the HTML default prompt/commands

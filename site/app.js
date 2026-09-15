@@ -1,107 +1,22 @@
-const form = document.querySelector("#workflow-form");
-const promptOutput = document.querySelector("#workflow-prompt");
-const status = document.querySelector("#copy-status");
-
-function updatePrompt() {
-  const { board, runtime, channel, concurrency, approval } = Object.fromEntries(
-    new FormData(form),
-  );
-  const assignments = {
-    Trello:
-      'Pick up Trello cards in the "Ready" list.\n- Use each card\'s repo:owner/name label to select its GitHub repository.',
-    Jira: 'Build a Jira adapter for issues assigned to the automation account\n  in "Ready". Use a configured Jira field to map each issue\n  to its GitHub repository.',
-    Linear:
-      'Build a Linear adapter for issues assigned to the automation account\n  in "Todo". Use a repo:owner/name label for the GitHub repository.',
-    "GitHub Issues":
-      "Build a GitHub Issues adapter for issues assigned to the automation\n  account and labeled agent-ready. Use the issue's repository.",
-  };
-  const reporting =
-    channel === "Console"
-      ? "Report health changes to the console."
-      : `Send health changes to ${channel}.`;
-  const composition =
-    board === "Trello"
-      ? "Reuse the Trello/GitHub starter"
-      : `Reuse Patchwake's engine, file store, and GitHub activity adapter;\nadd the ${board} board adapter`;
-  const healthAdapter =
-    channel === "Console"
-      ? " and use the\nincluded console channel."
-      : ` and add the\n${channel} health adapter.`;
-  const taskFlow =
-    approval === "plan"
-      ? `Run ${runtime} to write SPEC.md and PLAN.md, open a draft PR, and stop.
-- Before coding, require a new PR comment from a configured human approver:
-  @<bot-login> approve plan. Do not require a commit SHA or version.
-- Verify the author's repository permission and that approval follows publication
-  of the current spec and plan. Ask for fresh approval if the order is unclear.
-- Planning changes require fresh approval; CI activity is not approval.
-- Resume the same session to implement the approved plan.`
-      : `Run ${runtime} to implement the task and open a pull request.`;
-  const approvalSetup =
-    approval === "plan"
-      ? `
-Implement the approval convention in task templates, with PR-comment wakeups.
-Document the human approver configuration and separate agent GitHub identity.
-Test comment resumption and self-comment filtering with fixtures; document
-that the approval rule is agent-followed, not an engine-enforced gate.
-${
-  board === "Trello"
-    ? `
-Use Ready → Doing → Review → Done. Claim new cards only from Ready; retain
-existing local claims in Doing and Review, ignoring unclaimed cards there.
-The agent moves its card to Doing for work and Review for human feedback.
-After a human merges, a merge wake lets the agent verify completion and move
-the card to Done. A closed, unmerged PR stays in Review. Never auto-merge.
-Keep observers read-only. Require Trello read/write access for agent moves,
-validate required lists, and test claim retention, merge wakes, and outages.
-List moves alone must not wake an idle session or authorize implementation.
-`
-    : ""
-}
-`
-      : "";
-  promptOutput.textContent = `Read skills/build-orchestrator/SKILL.md and build my workflow:
-
-- ${assignments[board]}
-- ${taskFlow}
-- Resume the same session when reviewers request changes or CI fails.
-- Keep tasks assigned while planning, implementation, or review is pending.
-- ${reporting} Never merge automatically.
-- Run at most ${concurrency} agent turn${concurrency === "1" ? "" : "s"} at once; check for work every five minutes.
-
-Adapt workflow/orchestrator.ts and workflow/adapters.ts; preserve
---dry-run and --status. ${composition}${healthAdapter} Keep workflow rules in task templates.
-${approvalSetup}
-Document board setup, repository mapping, credentials, and the agent credential
-allowlist. Explain list IDs versus names and any automatic lookup you add.
-Add fixture tests and validate them before live provider reads.
-
-Include a first-task walkthrough and five-minute scheduler instructions with
-absolute executable paths, PATH, .env loading, logs, and host-awake requirements.
-Explain that npm start runs one tick and later activity needs another tick.`;
-  status.textContent = "";
-}
-form.addEventListener("change", updatePrompt);
-form.addEventListener("submit", (event) => event.preventDefault());
-document.querySelector("#copy-prompt").addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(promptOutput.textContent);
-    status.textContent = "Prompt copied.";
-  } catch {
-    const range = document.createRange();
-    range.selectNodeContents(promptOutput);
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    promptOutput.focus();
-    status.textContent = "Prompt selected. Press Ctrl+C or ⌘C to copy.";
-  }
-});
-
 const steps = {
   build: [
     "# Create your editable workflow project\nnpm create patchwake@latest my-workflow\ncd my-workflow",
-    "Create a project with a pinned engine dependency. Open it in your coding agent and use the workflow prompt above.",
+    "Create a project with a pinned engine dependency. Next, choose Customize to build your workflow with your coding agent.",
+  ],
+  customize: [
+    `Read skills/build-orchestrator/SKILL.md and build my workflow:
+
+- Pick up Trello cards in the "Ready" list.
+- Use each card's repo:owner/name label for its GitHub repository.
+- Run Codex CLI to implement the task and open a pull request.
+- Resume the same session for review feedback or CI failures.
+- Report health to the console. Never merge automatically.
+- Run one agent turn at a time; check for work every five minutes.
+
+Adapt workflow/orchestrator.ts, workflow/adapters.ts, and templates/task/.
+Preserve --dry-run and --status. Document setup, the agent credential
+allowlist, and scheduling. Add tests and validate with fixtures first.`,
+    "Use your agent to build the workflow. Open my-workflow in your coding agent and adapt this example prompt to your workflow. The included build-orchestrator skill guides the changes and validation. Then configure .env and authenticate your agent CLI before Preview.",
   ],
   preview: [
     "# Configure .env and add one small task to Ready\nnpm run build\nnpm run typecheck\nnpm test\nnpm run dry-run",
@@ -144,4 +59,99 @@ for (const tab of tabs) {
     selectStep(tabs[next]);
   });
 }
-updatePrompt();
+
+const examples = [
+  {
+    label: "Trello, GitHub, and Codex CLI",
+    board: "Trello / Ready",
+    runtime: "Codex CLI",
+    adapters: "Included Trello + GitHub starter",
+    action: "implement → open a PR",
+    destination: "GitHub / Pull request",
+    review: "Code review + CI",
+  },
+  {
+    label: "Jira, GitLab, and Claude Code",
+    board: "Jira / Ready",
+    runtime: "Claude Code",
+    adapters: "Jira + GitLab: custom adapters",
+    action: "spec + plan → open a draft MR",
+    destination: "GitLab / Merge request",
+    review: "Spec + plan + review gates",
+  },
+];
+const carousel = document.querySelector(".blueprint");
+const exampleSlide = document.querySelector("#example-slide");
+const exampleButtons = [...document.querySelectorAll("[data-example]")];
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let exampleIndex = 0;
+let rotating = !reducedMotion.matches;
+let hovering = false;
+let exampleTimer;
+
+function showExample(index) {
+  exampleIndex = index;
+  const example = examples[index];
+  document.querySelector("#example-number").textContent =
+    `EXAMPLE / ${String(index + 1).padStart(3, "0")}`;
+  for (const field of [
+    "board",
+    "runtime",
+    "adapters",
+    "action",
+    "destination",
+    "review",
+  ]) {
+    document.querySelector(`#example-${field}`).textContent = example[field];
+  }
+  exampleSlide.setAttribute(
+    "aria-label",
+    `${index + 1} of 2: ${example.label}`,
+  );
+  for (const button of exampleButtons) {
+    button.setAttribute(
+      "aria-pressed",
+      String(Number(button.dataset.example) === index),
+    );
+  }
+}
+
+function updateRotation() {
+  window.clearInterval(exampleTimer);
+  const running = rotating && !hovering && !document.hidden;
+  exampleSlide.setAttribute("aria-live", running ? "off" : "polite");
+  if (running) {
+    exampleTimer = window.setInterval(
+      () => showExample((exampleIndex + 1) % examples.length),
+      7000,
+    );
+  }
+}
+
+for (const button of exampleButtons) {
+  button.addEventListener("click", () => {
+    rotating = false;
+    updateRotation();
+    showExample(Number(button.dataset.example));
+  });
+}
+// Stop on keyboard focus so the example stays still while navigating controls.
+carousel.addEventListener("focusin", () => {
+  rotating = false;
+  updateRotation();
+});
+carousel.addEventListener("mouseenter", () => {
+  hovering = true;
+  updateRotation();
+});
+carousel.addEventListener("mouseleave", () => {
+  hovering = false;
+  updateRotation();
+});
+document.addEventListener("visibilitychange", updateRotation);
+reducedMotion.addEventListener("change", () => {
+  if (reducedMotion.matches) rotating = false;
+  updateRotation();
+});
+document.querySelector(".example-controls").hidden = false;
+updateRotation();
