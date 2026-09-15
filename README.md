@@ -42,31 +42,79 @@ Read skills/build-orchestrator/SKILL.md and build my workflow:
 - Use each card's repo:owner/name label to select its GitHub repository.
 - Run Codex CLI to implement the task and open a pull request.
 - Resume the same session when reviewers request changes or CI fails.
-- Send health changes to Slack. Never merge automatically.
-- Run at most two agent turns at once; check for work every five minutes.
+- Keep cards in Ready through planning, implementation, and review.
+- Report health changes to the console. Never merge automatically.
+- Run at most one agent turn at once; check for work every five minutes.
 
 Adapt workflow/orchestrator.ts and workflow/adapters.ts. Preserve --dry-run
-and --status. Reuse the Trello/GitHub starter and add the Slack health adapter.
-Document environment variables and the agent credential allowlist. Add fixture
-tests and scheduler instructions. Keep workflow rules in templates/task/.
+and --status. Reuse the Trello/GitHub starter and the included console channel.
+Keep workflow rules in templates/task/. Document board setup, list IDs versus
+names, repository labels, the agent identity, and the credential allowlist.
+Add fixture tests, a first-task walkthrough, and five-minute scheduler
+instructions with absolute paths, PATH, .env loading, and log inspection.
 ```
 
-Edit the generated `.env` and install and authenticate your chosen agent CLI.
-Then run in your workflow project:
+## Launch your first task
+
+Follow [Your first Trello + GitHub task](docs/first-task.md) to configure your
+board, Trello key and token, list IDs, repository labels, and agent GitHub
+identity. Install and authenticate your chosen agent CLI, then add one small
+card to Ready. In the generated project:
 
 ```bash
 npm run build        # repeat after editing the TypeScript workflow
+npm run typecheck
 npm test             # local fixtures, no external services
-npm run dry-run      # read provider state and preview decisions
+npm run dry-run      # inspect component health and confirm card detection
 npm start            # run one real tick
 npm run status       # inspect local tasks
 ```
 
-These generated scripts load `.env`. Dry runs do not claim tasks or start agents,
-but do write a local tick lock. Check component health in the report before
-enabling real ticks. The generated README includes an absolute-path cron example.
-Run it on a persistent host: agent turns continue between ticks and state remains
-under your project's `var/` directory.
+These generated scripts load `.env`. The bundled starter requires Trello **list
+IDs**, not the name `Ready`; automatic name lookup is a customization. Dry runs
+do not claim tasks or start agents, but do write a local tick lock. Inspect
+component health; a successful exit alone does not prove provider access.
+
+With this basic setup, keep the card in a configured list through implementation
+and review. For cards that move between stages, use the
+[list-lifecycle recipe](docs/first-task.md#optional-move-cards-as-work-progresses).
+`npm start` runs one tick; `npm run status` only reads local state. New feedback
+needs another tick to resume the session.
+
+## Schedule on a persistent host
+
+After the first task works, install the five-minute cron entry from your
+workflow's README. It must use absolute executable and project paths, load
+`.env`, and put the agent CLI and other required tools on `PATH`. Check
+`crontab -l` and follow `scheduler.log` to verify it runs.
+See the [complete scheduler walkthrough](packages/create-patchwake/project-README.md#schedule-on-a-persistent-host).
+
+Keep the host awake: agent turns continue between ticks and state remains under
+your project's `var/` directory. A review or plan approval resumes work on a
+later tick, not immediately when the comment is posted.
+
+## Make the workflow yours
+
+For example, have the agent propose its approach before implementing:
+
+```text
+Ready → Doing: spec + plan → Review: draft PR and human approval
+                                  ↓
+             Doing: implementation → Review: code review / CI
+                                               ↓
+                                  Human merge → Done
+```
+
+The [plan-approval recipe](docs/first-task.md#optional-review-a-plan-before-coding)
+asks your coding agent to add task instructions, verify a new `@bot approve plan`
+comment against the latest published documents, and preserve comment wakeups.
+Humans do not need to supply a commit SHA. Combine it with the
+[list-lifecycle recipe](docs/first-task.md#optional-move-cards-as-work-progresses)
+to admit new tasks from Ready and retain claimed tasks in Doing and Review.
+The agent moves the card to Done only after verifying a human merge. This is an optional
+agent-followed convention, not a built-in engine approval gate. Use separate
+GitHub identities for the agent and human reviewer so approvals are not filtered
+out as self-authored activity.
 
 Your adapters, instructions, and configuration stay in your project. Upgrade the
 engine with `npm install --save-exact patchwake@<version>` and commit the lockfile.
@@ -175,65 +223,20 @@ scheduler environment (or use Node's `--env-file=/absolute/path/to/.env`).
 filesystem with working `flock` semantics; detached turns need the same host to
 remain running between ticks.
 
-## Build your own workflow
+## Extend the engine or add a source example
 
-In a generated project, edit `workflow/orchestrator.ts` and `workflow/adapters.ts`;
-the local skill explains where to find installed contracts. Import from
-`patchwake` or `patchwake/<module>` and keep the engine dependency intact.
-The prompt below is for contributors working inside the source repository.
+For your own workflow, edit `workflow/orchestrator.ts`, `workflow/adapters.ts`,
+and `templates/task/` in the generated project. Import from `patchwake` or
+`patchwake/<module>` and keep the engine dependency intact. Start with
+[customization and upgrades](docs/customizing.md).
 
-
-Start with [docs/customizing.md](docs/customizing.md). In Codex, invoke the
-repository skill. The following prompt can be copied and completed with the
-providers and conventions for a new workflow:
-
-```text
-$build-orchestrator Build a custom workflow in this repository.
-
-Workflow:
-- Board and assignment query: <provider and how assigned work is selected>
-- Activity sources: <systems and events that should wake an agent>
-- Task-to-repository mapping: <label, field, naming convention, or lookup>
-- Agent runtime: <Codex CLI, Claude Code, or another runtime>
-- Health destination: <console, Slack, Teams, email, or another channel>
-- Maximum concurrent turns: <number>
-- Schedule: <cron, systemd timer, or another trigger>
-- Agent credential allowlist: <environment variable names, or none>
-
-Keep provider logic in adapters and reuse Patchwake's engine and file store.
-Add the composition under examples/<workflow-name>, document configuration and
-dry-run commands, and add tests for assignment, wakeups, outages, retries, and
-session resumption. Before coding, summarize the design and ask only for
-missing choices that would materially change external behavior.
-```
-
-For example, a user could start with:
-
-```text
-User: $build-orchestrator Create a Trello + GitHub workflow. Cards assigned to
-the automation member in the "Ready" list are work. A `repo:owner/name` label
-selects the repository. Wake the agent for new pull-request reviews, CI results,
-and comments that mention `@my-agent`. Use Codex CLI, allow at most two turns,
-report health to the console, and support a five-minute cron schedule. Only pass
-GITHUB_TOKEN to agent turns.
-
-Agent: I can implement this with a Trello Board adapter, a GitHub ActivitySource,
-CodexCliRuntime, ConsoleChannel, and the stock FileStateStore. Two choices affect
-behavior: should moving a card out of "Ready" stop an idle task, and should a
-failed CI check wake the agent immediately?
-
-User: Yes to both. Start with fixtures and a dry run; do not make remote writes
-during validation.
-```
-
-The agent should then implement the adapters and composition, run the tests,
-exercise a dry tick, and report the exact configuration, credential boundary,
-and scheduler command it created.
-
-The intended customization surface is composition, not inheritance: implement
-the small interfaces in `patchwake/ports.ts`, choose or implement an
-`AgentRuntime`, assemble everything with `Engine`, and keep provider-specific
-policy in the adapter or task template that owns it.
+When contributing inside this source repository, read
+[the build-orchestrator skill](skills/build-orchestrator/SKILL.md) and place new
+compositions under `examples/<workflow-name>`. Implement the interfaces in
+`patchwake/ports.ts`, assemble them with `Engine`, and keep provider policy in
+adapters and task templates. Document configuration and scheduler commands;
+validate assignment, wakeups, outages, retries, and resumption with fixtures
+before live provider reads.
 
 ## Distribution and releases
 

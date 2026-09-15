@@ -25,6 +25,22 @@ GitHub source and documentation links point to the public organization repositor
 `patchwake/patchwake`. Other adapters mentioned on the page are explicitly
 identified as custom implementations, not bundled integrations.
 
+The builder defaults to Trello, Codex CLI, the included console channel, and one
+agent turn. Its optional plan-approval choice asks the coding agent to implement
+a spec/plan draft PR and human approval via comments. This is a task-template
+convention, not an engine-enforced gate. The example and prompt must preserve
+that distinction and the separate agent/human GitHub identity requirement.
+Approvals use a new `@bot approve plan` comment without a SHA, verified against
+the latest published documents. For Trello, this choice also requests the
+Ready → Doing → Review → Done lifecycle: new work only from Ready, existing
+claims retained in Doing/Review, agent-owned moves, and Done after a human merge.
+This lifecycle requires a custom adapter and is not bundled starter behavior.
+
+`docs/first-task.md` bridges workflow creation and the first running task. It is
+also copied into generated projects. The run panel covers Create, Preview, Run,
+and Schedule; scheduler details belong in the generated project's README. The
+bundled Trello adapter requires list IDs, not names or automatic Ready lookup.
+
 The onboarding flow uses `npm create patchwake@latest` and prompts an agent to
 edit `workflow/` in the generated project. Keep the HTML default prompt/commands
 and their JavaScript equivalents aligned. Until both npm packages are released,

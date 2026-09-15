@@ -495,7 +495,7 @@ h3 {
 }
 .builder {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: minmax(320px, 0.85fr) 1.5fr;
   border: 1px solid var(--line);
   border-radius: 5px;
   overflow: hidden;
@@ -515,7 +515,7 @@ h3 {
 }
 .builder-controls label {
   display: block;
-  font-size: 11px;
+  font-size: 14px;
   margin: 19px 0 8px;
 }
 .builder-controls select {
@@ -523,14 +523,14 @@ h3 {
   border: 1px solid var(--line);
   background: var(--surface-raised);
   color: var(--ink);
-  font-size: 12px;
+  font-size: 14px;
   height: 39px;
   border-radius: 3px;
   padding: 0 10px;
   cursor: pointer;
 }
 .builder-hint {
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1.9;
   color: var(--muted);
   margin-top: 25px;
@@ -601,7 +601,7 @@ pre {
   justify-content: space-between;
 }
 .builder-disclaimer {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   line-height: 1.8;
   margin-top: 17px;
@@ -631,6 +631,7 @@ pre {
 }
 .run-tabs {
   display: flex;
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--line);
   padding-inline: 15px;
 }
@@ -676,10 +677,67 @@ pre {
   color: var(--accent);
 }
 .schedule-note p {
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1.8;
   margin: 0;
   color: var(--muted);
+}
+.builder-disclaimer a,
+.approval-example .text-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approval-example {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 70px;
+  padding-block: 0 88px;
+}
+.approval-example p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+.approval-example .text-link {
+  font-size: 14px;
+}
+.approval-steps {
+  list-style: none;
+  counter-reset: approval;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+.approval-steps li {
+  counter-increment: approval;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 4px 14px;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.approval-steps li::before {
+  content: counter(approval, decimal-leading-zero);
+  grid-row: span 2;
+  font: 14px/1.5 var(--mono);
+  color: var(--accent);
+}
+.approval-steps strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+.approval-steps span {
+  grid-column: 2;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.human-step {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+}
+.approval-example p.approval-note {
+  font-size: 14px;
 }
 .principles {
   border-top: 1px solid var(--line);
@@ -802,7 +860,7 @@ footer > a:last-child {
     gap: 40px;
   }
   .builder {
-    grid-template-columns: 245px 1fr;
+    grid-template-columns: minmax(300px, 0.85fr) 1.5fr;
   }
   .builder-controls {
     padding: 24px;
@@ -951,9 +1009,13 @@ footer > a:last-child {
     padding-inline: 20px;
   }
   .run-section,
-  .principles {
+  .principles,
+  .approval-example {
     grid-template-columns: 1fr;
     gap: 34px;
+  }
+  .approval-example {
+    padding-bottom: 60px;
   }
   .run-copy > p:not(.eyebrow) {
     max-width: 500px;

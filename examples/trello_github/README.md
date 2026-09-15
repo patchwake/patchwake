@@ -6,12 +6,20 @@ either observer; the agent itself is responsible for task and PR mutations.
 
 Conventions:
 
+- assignment: cards in `TRELLO_READY_LIST_IDS` (actual IDs, not list names);
 - task key: `TRELLO-<shortLink>`;
 - repository: a Trello label named `repo:<owner>/<repo>`;
 - priority: an optional numeric label `priority:<number>` (lower runs first);
 - branch: `agent-TRELLO-<shortLink>` in the same GitHub repository;
 - wake: formal reviews and inline review comments always count; top-level PR
   comments must mention `GITHUB_BOT_LOGIN` when directed wakeups are enabled.
+
+Follow [Your first task](https://github.com/patchwake/patchwake/blob/main/docs/first-task.md) for board setup, credentials,
+the agent's GitHub identity, and a first run. In a generated project the same
+guide is at `docs/first-task.md` from the project root. The bundled adapter does
+not discover Ready by name; automatic lookup and plan approval are optional
+customizations. Keep cards in the configured lists while they need agent work
+or review feedback.
 
 In a generated project, edit `.env` and run `npm run dry-run` after building.
 The generated npm scripts load `.env`; the workflow files live under `workflow/`.

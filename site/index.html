@@ -72,7 +72,7 @@
 
         <div
           class="blueprint"
-          aria-label="Example workflow: a Trello task starts an agent session, GitHub activity resumes that session, and a custom channel reports health to Slack."
+          aria-label="Example workflow: a Trello task starts a Codex session, GitHub activity resumes that session, and the included console channel reports health."
         >
           <div class="blueprint-top">
             <span>EXAMPLE / 001</span
@@ -97,8 +97,8 @@
               <div class="agent-node-body">
                 <span class="terminal-symbol" aria-hidden="true">›_</span>
                 <div>
-                  <strong>Your coding agent</strong
-                  ><span>Claude Code or Codex CLI</span>
+                  <strong>Codex CLI</strong
+                  ><span>Your agent, your workflow</span>
                 </div>
               </div>
               <div class="agent-node-footer">
@@ -124,11 +124,11 @@
           </div>
           <div class="diagram-channel">
             <span aria-hidden="true">#</span
-            ><span>Health updates → <strong>Slack</strong></span
-            ><span class="custom-tag">CUSTOM ADAPTER</span>
+            ><span>Health updates → <strong>Console</strong></span
+            ><span class="custom-tag">INCLUDED</span>
           </div>
           <div class="blueprint-bottom">
-            <span>2 concurrent turns</span><span>Check every 5 min</span
+            <span>1 agent turn at a time</span><span>Check every 5 min</span
             ><span>No auto-merge</span>
           </div>
         </div>
@@ -198,6 +198,55 @@
         </div>
       </section>
 
+      <section class="approval-example wrap" aria-labelledby="approval-title">
+        <div>
+          <p class="eyebrow">A workflow you can build</p>
+          <h2 id="approval-title">Review the plan.<br />Then let it code.</h2>
+          <p>
+            Ask the agent to write a spec and plan in a draft PR, then pause for
+            your approval. Your comment brings it back to the same session to
+            implement the plan you reviewed. Let the card follow its progress
+            through Ready, Doing, Review, and Done.
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/patchwake/patchwake/blob/main/docs/first-task.md#optional-review-a-plan-before-coding"
+            >Read the approval recipe →</a
+          >
+        </div>
+        <div>
+          <ol class="approval-steps" aria-label="Example with human approval">
+            <li><strong>Trello card</strong><span>One task in Ready</span></li>
+            <li>
+              <strong>Doing → Spec + plan</strong
+              ><span>Agent opens a draft PR</span>
+            </li>
+            <li class="human-step">
+              <strong>Review → Your approval</strong
+              ><span>Comment “@your-bot approve plan”</span>
+            </li>
+            <li>
+              <strong>Doing → Implementation</strong
+              ><span>Agent resumes the same session</span>
+            </li>
+            <li>
+              <strong>Review → Code review + CI</strong
+              ><span>Revisions return the card to Doing</span>
+            </li>
+            <li>
+              <strong>Done → After you merge</strong
+              ><span>The next merge wake lets the agent verify completion</span>
+            </li>
+          </ol>
+          <p class="approval-note">
+            Optional customization: the adapter retains claimed cards in Doing
+            and Review; the agent moves them. Approval follows task
+            instructions, not an engine-enforced gate. Moving a card alone does
+            not wake it.
+          </p>
+        </div>
+      </section>
+
       <section id="build" class="builder-section">
         <div class="wrap">
           <div class="section-heading">
@@ -241,16 +290,29 @@
               </select>
               <label for="channel">Health updates go to</label
               ><select id="channel" name="channel">
-                <option value="Slack">Slack · custom adapter</option>
                 <option value="Console">Console · included</option>
+                <option value="Slack">Slack · custom adapter</option>
                 <option value="Teams">Teams · custom adapter</option>
               </select>
               <label for="concurrency">Concurrent agent turns</label
               ><select id="concurrency" name="concurrency">
                 <option value="1">1 turn</option>
-                <option value="2" selected>2 turns</option>
+                <option value="2">2 turns</option>
                 <option value="4">4 turns</option>
               </select>
+              <label for="approval">Before coding</label
+              ><select
+                id="approval"
+                name="approval"
+                aria-describedby="approval-hint"
+              >
+                <option value="immediate">Implement immediately</option>
+                <option value="plan">Plan, then human approval</option>
+              </select>
+              <p class="builder-hint" id="approval-hint">
+                Plan approval adds task instructions and comment wakeups. Use
+                separate GitHub accounts for the agent and human approver.
+              </p>
               <p class="builder-hint">
                 This starting prompt uses GitHub for code and reviews; adapt it
                 for your code host.<br />Five-minute ticks. You control merging.
@@ -270,16 +332,21 @@ Read skills/build-orchestrator/SKILL.md and build my workflow:
 - Use each card's repo:owner/name label to select its GitHub repository.
 - Run Codex CLI to implement the task and open a pull request.
 - Resume the same session when reviewers request changes or CI fails.
-- Send health changes to Slack. Never merge automatically.
-- Run at most 2 agent turns at once; check for work every five minutes.
+- Keep tasks assigned while planning, implementation, or review is pending.
+- Report health changes to the console. Never merge automatically.
+- Run at most 1 agent turn at once; check for work every five minutes.
 
 Adapt workflow/orchestrator.ts and workflow/adapters.ts; preserve
---dry-run and --status. Reuse the Trello/GitHub starter and add the
-Slack health adapter. Keep workflow rules in task templates.
+--dry-run and --status. Reuse the Trello/GitHub starter and use the
+included console channel. Keep workflow rules in task templates.
 
-Document the required environment variables and explicitly
-allowlist credentials needed by the agent. Add tests and scheduler
-instructions; validate with fixtures first.</pre>
+Document board setup, repository mapping, credentials, and the agent credential
+allowlist. Explain list IDs versus names and any automatic lookup you add.
+Add fixture tests and validate them before live provider reads.
+
+Include a first-task walkthrough and five-minute scheduler instructions with
+absolute executable paths, PATH, .env loading, logs, and host-awake requirements.
+Explain that npm start runs one tick and later activity needs another tick.</pre>
               <div class="prompt-footer">
                 <span>Plain language in. A TypeScript workflow out.</span
                 ><span id="copy-status" role="status" aria-live="polite"></span>
@@ -293,6 +360,14 @@ instructions; validate with fixtures first.</pre>
             install and authenticate your chosen agent CLI. Jira, Linear, GitHub
             Issues, Slack, and Teams require custom adapters. Boards, code
             hosts, and notification channels can each be replaced independently.
+          </p>
+          <p class="builder-disclaimer">
+            Next:
+            <a
+              href="https://github.com/patchwake/patchwake/blob/main/docs/first-task.md"
+              >set up your board, agent identity, and first task</a
+            >. The bundled Trello starter requires list IDs; selecting a list by
+            name requires a workflow customization.
           </p>
           <noscript
             ><p>
@@ -311,7 +386,8 @@ instructions; validate with fixtures first.</pre>
             Patchwake runs with your installed agent CLI and stores task state
             and logs locally. Configure your workflow, then run these commands
             from your workflow project to preview decisions, run a tick, and
-            inspect local task status.
+            inspect local task status. Start with one small card, then enable
+            recurring ticks after the first task works.
           </p>
           <p class="run-requirements">
             Node.js 22+ · Linux or macOS<br />Python + a C/C++ toolchain to
@@ -319,8 +395,8 @@ instructions; validate with fixtures first.</pre>
           </p>
           <a
             class="text-link"
-            href="https://github.com/patchwake/patchwake#start-your-own-workflow"
-            >Read the setup guide <span aria-hidden="true">↗</span></a
+            href="https://github.com/patchwake/patchwake/blob/main/docs/first-task.md"
+            >Launch your first task <span aria-hidden="true">↗</span></a
           >
         </div>
         <div class="run-panel">
@@ -357,7 +433,17 @@ instructions; validate with fixtures first.</pre>
               data-step="run"
               type="button"
             >
-              03 Run
+              03 Run</button
+            ><button
+              id="tab-schedule"
+              role="tab"
+              aria-selected="false"
+              aria-controls="run-code"
+              tabindex="-1"
+              data-step="schedule"
+              type="button"
+            >
+              04 Schedule
             </button>
           </div>
           <div
@@ -379,10 +465,10 @@ cd my-workflow</pre>
           <div class="schedule-note">
             <span aria-hidden="true">↻</span>
             <p>
-              Schedule the same command every five minutes with cron or a
-              systemd timer on a persistent host. Agent turns continue between
-              ticks; keep <code>var/</code> on a local filesystem with file
-              locks.
+              <code>npm start</code> runs one tick. New reviews, CI activity,
+              and plan approvals need a later tick to resume work. Use your
+              workflow README to install a five-minute schedule, check its logs,
+              and keep the host awake.
             </p>
           </div>
         </div>
