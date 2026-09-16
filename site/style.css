@@ -415,6 +415,43 @@ h1 > span {
   color: var(--muted);
   background: var(--surface-strong);
 }
+.demo-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  align-items: center;
+  gap: 56px;
+  border-top: 1px solid var(--line);
+  padding-block: 56px 88px;
+}
+.demo-copy .eyebrow {
+  margin-bottom: 20px;
+}
+.demo-description {
+  margin: 22px 0 28px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.75;
+}
+.demo-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.demo-actions a {
+  font-size: 14px;
+}
+.demo-player {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--terminal);
+  box-shadow: 0 12px 40px var(--shadow);
+}
 .capability-strip {
   border-block: 1px solid var(--line);
 }
@@ -727,6 +764,9 @@ footer > a:last-child {
   .principles {
     gap: 40px;
   }
+  .demo-section {
+    gap: 30px;
+  }
   .section-heading > p {
     max-width: 300px;
   }
@@ -783,6 +823,11 @@ footer > a:last-child {
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 20px 27px;
+  }
+  .demo-section {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-block: 40px 52px;
   }
   .capability-strip > .wrap > span:first-child {
     width: 100%;

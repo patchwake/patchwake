@@ -14,6 +14,10 @@ updates.
 
 [Visit the website](https://patchwake.github.io/patchwake/) to explore Patchwake and get started with your own workflow.
 
+## [Watch Patchwake in 30 seconds](https://www.youtube.com/watch?v=Djw26OicNXE)
+
+[![Watch Patchwake in 30 seconds on YouTube](https://i.ytimg.com/vi/Djw26OicNXE/maxresdefault.jpg)](https://www.youtube.com/watch?v=Djw26OicNXE)
+
 ## Start your own workflow
 
 Create an editable project with Patchwake installed as a pinned dependency:

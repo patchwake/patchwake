@@ -2,8 +2,8 @@
 
 Published at https://patchwake.github.io/patchwake/.
 
-Source for the GitHub Pages landing page. No build step, external
-assets, analytics, or live integration calls are required.
+Source for the GitHub Pages landing page. No build step, analytics, or live
+integration calls are required. The demo loads an external YouTube player.
 
 From the repository root:
 
@@ -34,6 +34,10 @@ while the tab is hidden, and stops for the rest of the page visit on keyboard
 focus or selection of 1 or 2. There is no Play/Pause control. Reduced-motion
 preferences disable automatic rotation by default. Without JavaScript, the Trello diagram remains
 visible and carousel controls stay hidden.
+
+A responsive video player follows the hero with the 30-second Patchwake demo.
+It uses YouTube's privacy-enhanced embed, loads lazily, and does not autoplay.
+Nearby links lead to Get started and the video on YouTube.
 
 `docs/first-task.md` bridges workflow creation and the first running task. It is
 also copied into generated projects. The run panel follows the intro, before
